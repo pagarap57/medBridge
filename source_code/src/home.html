@@ -27,24 +27,19 @@
         radial-gradient(circle at 92% 20%, rgba(150, 81, 49, 0.22), transparent 22%),
         radial-gradient(circle at 15% 90%, rgba(138, 146, 196, 0.28), transparent 26%),
         linear-gradient(180deg, #23272d 0%, #31445d 55%, #425d8d 100%);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
     }
 
     .screen {
       position: relative;
-      width: min(96vw, 1400px);
-      height: min(96vh, 1100px);
-      /*border: 14px solid rgba(40, 39, 44, 0.85);*/
+      width: 100%;
+      min-height: 100vh;
       overflow: hidden;
       background:
         linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)),
         linear-gradient(180deg, #26323a 0%, #314661 52%, #46628f 100%);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
     }
 
     .screen::before {
@@ -136,14 +131,14 @@
     }
 
     .content {
-      position: absolute;
-      inset: 0;
+      position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 40px 20px;
+      min-height: 100vh;
+      padding: 56px 20px;
     }
 
     .panel {
@@ -221,10 +216,6 @@
     }
 
     @media (max-width: 900px) {
-      .screen {
-        border-width: 10px;
-      }
-
       .blob1 {
         width: 480px;
         height: 480px;
@@ -258,16 +249,6 @@
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      .screen {
-        width: 100vw;
-        height: 100vh;
-        border-width: 0;
-      }
-
       .brand {
         margin-bottom: 24px;
       }
@@ -288,6 +269,11 @@
         width: 72%;
         font-size: 1.7rem;
       }
+
+      .content {
+        min-height: auto;
+        padding: 44px 14px 52px;
+      }
     }
   </style>
 </head>
@@ -302,20 +288,20 @@
     <div class="blob blob7"></div>
 
     <div class="content">
-      <div class="panel">
-        <h1 class="brand">MedBridge</h1>
+  <div class="panel">
+    <h1 class="brand">MedBridge</h1>
 
-        <button class="primary-btn" onclick="window.location.href='/login'">
-          LOGIN! <span class="arrow">→</span>
-        </button>
+    <button class="primary-btn" onclick="window.location.href='login.html'">
+      LOGIN! <span class="arrow">→</span>
+    </button>
 
-        <p class="secondary-text">New to MedBridge?</p>
+    <p class="secondary-text">New to MedBridge?</p>
 
-        <button class="secondary-btn" onclick="window.location.href='/signup'">
-          SIGN UP! <span class="arrow">→</span>
-        </button>
-      </div>
-    </div>
+    <button class="secondary-btn" onclick="window.location.href='signup.html'">
+      SIGN UP! <span class="arrow">→</span>
+    </button>
   </div>
+</div>
+    </div>
 </body>
 </html>
