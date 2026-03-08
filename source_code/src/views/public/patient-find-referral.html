@@ -96,7 +96,7 @@
         <div id="detail-content" style="display:none;">
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="detail-item-label">Doctor</span>
+              <span class="detail-item-label">Referred Specialist</span>
               <span class="detail-item-value" id="detail-doctor"></span>
             </div>
             <div class="detail-item">
@@ -108,7 +108,7 @@
               <span class="detail-item-value" id="detail-specialty"></span>
             </div>
             <div class="detail-item">
-              <span class="detail-item-label">Where They Work</span>
+              <span class="detail-item-label">Clinic / Location</span>
               <span class="detail-item-value" id="detail-clinic"></span>
             </div>
           </div>
@@ -142,33 +142,6 @@
       }
     });
 
-    const referrals = [
-      {
-        doctorName: "Dr. Priya Nair",
-        referralType: "Cardiology Referral",
-        specialty: "Cardiology",
-        clinic: "St. Anthony Heart Center, Denver",
-        location: "Denver, CO",
-        notes: "Great for chest pain follow-up, ECG review, and preventive risk planning."
-      },
-      {
-        doctorName: "Dr. Marcus Lee",
-        referralType: "Endocrinology Referral",
-        specialty: "Endocrinology",
-        clinic: "Westside Specialty Clinic, Lakewood",
-        location: "Lakewood, CO",
-        notes: "Focuses on thyroid disorders and personalized diabetes management."
-      },
-      {
-        doctorName: "Dr. Elena Morales",
-        referralType: "Pulmonology Referral",
-        specialty: "Pulmonology",
-        clinic: "North Medical Pavilion, Aurora",
-        location: "Aurora, CO",
-        notes: "Strong fit for asthma treatment, long-term cough evaluation, and breathing tests."
-      }
-    ];
-
     const listEl = document.getElementById("referral-list");
     const detailTitle = document.getElementById("detail-title");
     const detailMeta = document.getElementById("detail-meta");
@@ -182,7 +155,7 @@
 
     function showDetails(referral) {
       detailTitle.textContent = "Select a refferal";
-      detailMeta.textContent = `${referral.doctorName} • ${referral.location}`;
+      detailMeta.textContent = `${referral.doctorName} • ${referral.location || "Location not specified"} • ${referral.status}`;
       detailDoctor.textContent = referral.doctorName;
       detailType.textContent = referral.referralType;
       detailSpecialty.textContent = referral.specialty;
@@ -192,27 +165,70 @@
       detailPlaceholder.style.display = "none";
     }
 
-    referrals.forEach((referral, index) => {
-      const li = document.createElement("li");
-      li.className = "referral-item";
-      li.innerHTML = `
-        <div class="referral-title">${referral.doctorName}</div>
-        <div class="referral-meta">${referral.specialty} • ${referral.location}</div>
-      `;
+    function referralViewModel(referral) {
+      const referringDoctor = `${referral.doctor_first_name || ""} ${referral.doctor_last_name || ""}`.trim() || "Doctor";
+      const specialistType = referral.specialist_type || "Specialist";
+      const referredSpecialist = referral.specialist_name || "Not specified";
+      const clinicLocation = referral.location || "Not specified";
 
-      li.addEventListener("click", () => {
-        document.querySelectorAll(".referral-item").forEach((el) => el.classList.remove("active"));
-        li.classList.add("active");
-        showDetails(referral);
-      });
+      return {
+        doctorName: referredSpecialist,
+        referralType: `${specialistType} Referral`,
+        specialty: specialistType,
+        clinic: clinicLocation,
+        location: clinicLocation,
+        referringDoctor,
+        notes: referral.notes || "No additional notes provided.",
+        status: referral.status || "Pending"
+      };
+    }
 
-      listEl.appendChild(li);
+    async function loadReferrals() {
+      try {
+        const response = await fetch("/api/referrals");
+        if (!response.ok) {
+          throw new Error("Failed to load referrals");
+        }
 
-      if (index === 0) {
-        li.classList.add("active");
-        showDetails(referral);
+        const data = await response.json();
+        const referrals = (data.referrals || []).map(referralViewModel);
+
+        if (referrals.length === 0) {
+          detailTitle.textContent = "No referrals yet";
+          detailMeta.textContent = "Your doctor has not sent any referrals to your account yet.";
+          detailPlaceholder.textContent = "When a referral is sent to your account, it will appear here.";
+          return;
+        }
+
+        referrals.forEach((referral, index) => {
+          const li = document.createElement("li");
+          li.className = "referral-item";
+          li.innerHTML = `
+            <div class="referral-title">${referral.doctorName}</div>
+            <div class="referral-meta">${referral.specialty} • ${referral.location} • ${referral.status}</div>
+          `;
+
+          li.addEventListener("click", () => {
+            document.querySelectorAll(".referral-item").forEach((el) => el.classList.remove("active"));
+            li.classList.add("active");
+            showDetails(referral);
+          });
+
+          listEl.appendChild(li);
+
+          if (index === 0) {
+            li.classList.add("active");
+            showDetails(referral);
+          }
+        });
+      } catch (error) {
+        detailTitle.textContent = "Unable to load referrals";
+        detailMeta.textContent = "Please refresh and try again.";
+        detailPlaceholder.textContent = "If the issue continues, contact support.";
       }
-    });
+    }
+
+    loadReferrals();
   </script>
 </body>
 </html>
