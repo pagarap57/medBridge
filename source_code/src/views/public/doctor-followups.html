@@ -29,6 +29,17 @@
     .btn { text-decoration: none; border-radius: 999px; padding: 8px 12px; font-size: 0.8rem; font-weight: 700; }
     .btn-primary { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
     .btn-secondary { color: #17353b; background: rgba(255,255,255,0.7); border: 1px solid rgba(16,41,52,0.16); }
+    .confirm-banner { margin-top: 12px; border-radius: 12px; padding: 10px 12px; font-size: 0.9rem; font-weight: 600; color: #1f4f2a; background: #e2f7e7; border: 1px solid #9ad0a6; display: none; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 40; padding: 16px; }
+    .modal-overlay.show { display: flex; }
+    .modal { width: min(480px, 100%); background: #f5f0f0; border-radius: 16px; padding: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .modal h3 { font-family: "Cormorant Garamond", serif; font-size: 1.8rem; margin-bottom: 8px; }
+    .modal p { color: #5f5a5a; margin-bottom: 10px; line-height: 1.5; }
+    .modal select { width: 100%; border: 1px solid rgba(16,41,52,0.2); border-radius: 12px; padding: 10px 11px; background: #fff; font-size: 0.92rem; margin-bottom: 12px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .modal-btn { border: none; border-radius: 999px; padding: 9px 14px; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
+    .modal-cancel { background: rgba(255,255,255,0.85); border: 1px solid rgba(16,41,52,0.16); color: #17353b; }
+    .modal-send { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
     @media (max-width: 760px) {
       .page { padding: 20px 16px 34px; }
       .logo { font-size: 2.4rem; }
@@ -44,6 +55,7 @@
       <nav class="topbar-actions">
         <a class="top-btn" href="/doctor-main">Home</a>
         <a class="top-btn" href="/doctor-profile">My Profile</a>
+              <a class="top-btn" href="/logout">Log out</a>
       </nav>
     </header>
 
@@ -54,13 +66,14 @@
       <div class="grid">
         <article class="card">
           <div><div class="name">Cardiology - Dr. Priya Nair</div><div class="meta">Interventional cardiology | Availability: 3 days | St. Anthony Heart Center</div></div>
-          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Referral</a></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist="Cardiology - Dr. Priya Nair" type="button">Send Referral</button></div>
         </article>
         <article class="card">
           <div><div class="name">Endocrinology - Dr. Marcus Lee</div><div class="meta">Diabetes and thyroid care | Availability: 5 days | Westside Specialty Clinic</div></div>
-          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Referral</a></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist="Endocrinology - Dr. Marcus Lee" type="button">Send Referral</button></div>
         </article>
       </div>
+      <div class="confirm-banner" id="confirm-banner"></div>
     </section>
 
     <section class="panel">
@@ -79,5 +92,64 @@
       </div>
     </section>
   </main>
+
+  <div class="modal-overlay" id="referral-modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h3 id="modal-title">Send referral</h3>
+      <p id="modal-subtitle">Choose a client to receive this referral.</p>
+      <select id="client-select">
+        <option value="">Select a client</option>
+        <option value="Mia Johnson">Mia Johnson</option>
+        <option value="Noah Patel">Noah Patel</option>
+        <option value="Elena Ruiz">Elena Ruiz</option>
+        <option value="Aiden Brooks">Aiden Brooks</option>
+      </select>
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel" id="cancel-send" type="button">Cancel</button>
+        <button class="modal-btn modal-send" id="confirm-send" type="button">Confirm Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("referral-modal");
+    const clientSelect = document.getElementById("client-select");
+    const modalSubtitle = document.getElementById("modal-subtitle");
+    const confirmBanner = document.getElementById("confirm-banner");
+    const sendButtons = document.querySelectorAll(".send-referral-btn");
+    const cancelBtn = document.getElementById("cancel-send");
+    const confirmBtn = document.getElementById("confirm-send");
+    let selectedSpecialist = "";
+
+    sendButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedSpecialist = btn.dataset.specialist || "selected specialist";
+        modalSubtitle.textContent = `Choose a client for ${selectedSpecialist}.`;
+        clientSelect.value = "";
+        modal.classList.add("show");
+      });
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      modal.classList.remove("show");
+    });
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.classList.remove("show");
+      }
+    });
+
+    confirmBtn.addEventListener("click", () => {
+      const selectedClient = clientSelect.value;
+      if (!selectedClient) {
+        alert("Please choose a client first.");
+        return;
+      }
+      modal.classList.remove("show");
+      confirmBanner.textContent = `Referral sent to ${selectedClient} for ${selectedSpecialist}.`;
+      confirmBanner.style.display = "block";
+    });
+  </script>
 </body>
 </html>

@@ -211,6 +211,23 @@ font-family: "Marcellus SC", serif;
       transform: translateY(-2px);
     }
 
+    .back-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #112244;
+      background: linear-gradient(90deg, rgba(243, 240, 249, 0.95), rgba(239, 237, 225, 0.9));
+      transition: transform 0.2s ease;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+    }
+
     @media (max-width: 640px) {
       .brand {
         font-size: 3rem;
@@ -310,7 +327,7 @@ font-family: "Marcellus SC", serif;
 
       <p class="small-text">Already have an account?</p>
       <a href="/login" class="switch-btn">LOGIN! →</a>
-      <p class="small-text" style="margin-top: 10px;"><a href="/">Back to home</a></p>
+      <a href="/" class="back-btn">Back to home</a>
     </div>
   </div>
 </body>
