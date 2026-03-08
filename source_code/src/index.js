@@ -87,15 +87,24 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.redirect('/signup?error=All+fields+are+required');
+    }
+
     const role = req.body.role === 'doctor' ? 'doctor' : 'patient';
+
+    const existing = await db.oneOrNone('SELECT id FROM users WHERE email=$1', [email]);
+    if (existing) {
+      return res.redirect('/signup?error=Email+already+registered');
+    }
+
     const hash = await bcrypt.hash(password, 10);
 
     const user = await db.one(
-      `
-      INSERT INTO users(first_name, last_name, email, password, role)
-      VALUES($1, $2, $3, $4, $5)
-      RETURNING id, first_name, last_name, email, role
-      `,
+      `INSERT INTO users(first_name, last_name, email, password, role)
+       VALUES($1, $2, $3, $4, $5)
+       RETURNING id, first_name, last_name, email, role`,
       [firstName, lastName, email, hash, role]
     );
 
@@ -103,25 +112,30 @@ app.post('/signup', async (req, res) => {
     req.session.save(() => res.redirect('/dashboard'));
   } catch (err) {
     console.error(err);
-    res.status(400).send('Signup failed');
+    res.redirect('/signup?error=Signup+failed.+Please+try+again');
   }
 });
 
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.redirect('/login?error=Email+and+password+are+required');
+    }
+
     const user = await db.oneOrNone(
       'SELECT id, first_name, last_name, email, password, role FROM users WHERE email=$1',
       [email]
     );
 
     if (!user) {
-      return res.status(401).send('User not found');
+      return res.redirect('/login?error=No+account+found+with+that+email');
     }
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
-      return res.status(401).send('Invalid password');
+      return res.redirect('/login?error=Invalid+password');
     }
 
     req.session.user = {
@@ -135,7 +149,7 @@ app.post('/login', async (req, res) => {
     req.session.save(() => res.redirect('/dashboard'));
   } catch (err) {
     console.error(err);
-    res.status(500).send('Login error');
+    res.redirect('/login?error=Something+went+wrong.+Please+try+again');
   }
 });
 
