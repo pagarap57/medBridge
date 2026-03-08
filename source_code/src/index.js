@@ -238,8 +238,29 @@ app.get('/logout', (req, res) => {
   });
 });
 
-io.on('connection', (socket) => {
-  console.log('User connected', socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("chat message", async (msg) => {
+
+    try {
+
+      await db.none(
+        "INSERT INTO messages(sender_id, recipient_id, content) VALUES($1,$2,$3)",
+        [msg.sender, msg.recipient, msg.text]
+      );
+
+    } catch (err) {
+      console.error("DB insert failed:", err);
+    }
+
+    io.emit("chat message", msg);
+
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
 });
 
 const PORT = Number(process.env.PORT || 3000);
