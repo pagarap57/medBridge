@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physician Profile | MedBridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 26px 30px 46px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .logo { font-family: "Marcellus SC", serif; font-size: 3rem; color: #0f4d4f; text-decoration: none; }
+    .topbar-actions { display: flex; gap: 12px; align-items: center; }
+    .top-btn { text-decoration: none; color: #17353b; background: #f3eeee; border: 1px solid rgba(16,41,52,0.18); border-radius: 12px; padding: 9px 14px; font-size: 0.92rem; font-weight: 600; }
+    .hero, .history { background: #dfd8d8; border-radius: 22px; padding: 26px; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; }
+    .hero { display: grid; grid-template-columns: 160px 1fr; gap: 22px; margin-bottom: 20px; }
+    .avatar { width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(180deg, #b9b6b6 0%, #999696 100%); border: 3px solid rgba(255,255,255,0.65); box-shadow: 0 8px 18px rgba(0,0,0,0.12); }
+    h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 3.8vw, 2.8rem); margin-bottom: 6px; }
+    .sub { color: #5f5a5a; margin-bottom: 16px; }
+    .info { display: grid; grid-template-columns: repeat(2, minmax(200px,1fr)); gap: 12px; }
+    .info-item { background: rgba(255,255,255,0.45); border-radius: 12px; padding: 11px 12px; }
+    .label { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a6565; font-weight: 700; display: block; margin-bottom: 4px; }
+    .value { font-size: 0.95rem; font-weight: 600; color: #171616; }
+    h2 { font-family: "Cormorant Garamond", serif; font-size: 2rem; margin-bottom: 12px; }
+    .list { list-style: none; display: grid; gap: 10px; }
+    .item { background: rgba(255,255,255,0.52); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: 130px 1fr; gap: 12px; }
+    .date { font-size: 0.82rem; font-weight: 700; color: #4e4a4a; text-transform: uppercase; }
+    .event { font-weight: 600; margin-bottom: 2px; }
+    .note { color: #5f5a5a; font-size: 0.93rem; }
+    @media (max-width: 760px) {
+      .page { padding: 20px 16px 34px; }
+      .logo { font-size: 2.4rem; }
+      .hero { grid-template-columns: 1fr; }
+      .info { grid-template-columns: 1fr; }
+      .item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="logo" href="/doctor-main">MedBridge</a>
+      <nav class="topbar-actions">
+        <a class="top-btn" href="/doctor-main">Home</a>
+        <a class="top-btn" href="/doctor-followups">Referrals</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="avatar" aria-label="Physician profile picture placeholder"></div>
+      <div>
+        <h1>Physician Profile</h1>
+        <p class="sub">Clinical identity, specialty details, and recent practice activity.</p>
+        <div class="info">
+          <div class="info-item"><span class="label">Name</span><span class="value">Dr. Avery Chen</span></div>
+          <div class="info-item"><span class="label">Specialty</span><span class="value">Internal Medicine</span></div>
+          <div class="info-item"><span class="label">NPI</span><span class="value">1457382190</span></div>
+          <div class="info-item"><span class="label">Clinic</span><span class="value">MedBridge Primary Care</span></div>
+          <div class="info-item"><span class="label">Years in Practice</span><span class="value">11 years</span></div>
+          <div class="info-item"><span class="label">Status</span><span class="value">Active</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="history">
+      <h2>Recent Activity</h2>
+      <ul class="list">
+        <li class="item"><div class="date">Mar 03, 2026</div><div><div class="event">Completed 14 patient encounters</div><div class="note">Average consult time: 21 minutes.</div></div></li>
+        <li class="item"><div class="date">Feb 28, 2026</div><div><div class="event">Reviewed 9 chart updates</div><div class="note">All pending lab notes signed before end of day.</div></div></li>
+        <li class="item"><div class="date">Feb 22, 2026</div><div><div class="event">Follow-up queue cleared</div><div class="note">Responded to all medium/high-priority patient messages.</div></div></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

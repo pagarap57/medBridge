@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule and Follow-Ups | MedBridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 26px 30px 46px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+    .logo { font-family: "Marcellus SC", serif; font-size: 3rem; color: #0f4d4f; text-decoration: none; }
+    .topbar-actions { display: flex; gap: 12px; align-items: center; }
+    .top-btn { text-decoration: none; color: #17353b; background: #f3eeee; border: 1px solid rgba(16,41,52,0.18); border-radius: 12px; padding: 9px 14px; font-size: 0.92rem; font-weight: 600; }
+    .panel { background: #dfd8d8; border-radius: 22px; padding: 24px; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; }
+    .panel + .panel { margin-top: 16px; }
+    h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 3.8vw, 2.8rem); margin-bottom: 8px; }
+    .sub { color: #5f5a5a; margin-bottom: 16px; line-height: 1.55; }
+    .schedule-list { list-style: none; display: grid; gap: 10px; }
+    details.row { background: rgba(255,255,255,0.52); border-radius: 14px; padding: 10px 12px; }
+    summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 90px 1fr 120px 90px; gap: 12px; align-items: center; }
+    summary::-webkit-details-marker { display: none; }
+    .time { font-weight: 700; color: #17353b; }
+    .patient { font-weight: 600; color: #171616; }
+    .visit-type { font-size: 0.84rem; color: #666; }
+    .status { justify-self: end; font-size: 0.76rem; font-weight: 700; color: #2b4f58; background: rgba(75,125,138,0.16); padding: 7px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .chev { justify-self: end; font-size: 0.85rem; color: #5f5a5a; }
+    .dropdown { margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 10px; }
+    .handoff { display: grid; grid-template-columns: repeat(3, minmax(160px,1fr)); gap: 10px; margin-bottom: 10px; }
+    .field { background: rgba(255,255,255,0.55); border-radius: 10px; padding: 10px; }
+    .label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6a6565; margin-bottom: 4px; font-weight: 700; }
+    .value { font-size: 0.9rem; font-weight: 600; color: #171616; }
+    .note { color: #5f5a5a; line-height: 1.45; font-size: 0.92rem; margin-bottom: 10px; }
+    .row-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { text-decoration: none; border-radius: 999px; padding: 9px 14px; font-size: 0.85rem; font-weight: 700; }
+    .btn-profile { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
+    .btn-msg { color: #17353b; background: rgba(255,255,255,0.65); border: 1px solid rgba(16,41,52,0.16); }
+    h2 { font-family: "Cormorant Garamond", serif; font-size: clamp(1.7rem, 3vw, 2.2rem); margin-bottom: 10px; }
+    .follow-list { list-style: none; display: grid; gap: 10px; }
+    .follow-item { background: rgba(255,255,255,0.5); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: 120px 1fr 90px; gap: 12px; align-items: center; }
+    .due { font-weight: 700; color: #17353b; }
+    .task { font-weight: 600; color: #171616; }
+    .priority { font-size: 0.78rem; font-weight: 700; text-align: center; padding: 7px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; background: rgba(176,140,76,0.18); color: #584320; }
+    @media (max-width: 800px) {
+      .page { padding: 20px 16px 34px; }
+      .logo { font-size: 2.4rem; }
+      summary { grid-template-columns: 1fr; }
+      .status, .chev { justify-self: start; }
+      .handoff { grid-template-columns: 1fr; }
+      .follow-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="logo" href="/doctor-main">MedBridge</a>
+      <nav class="topbar-actions">
+        <a class="top-btn" href="/doctor-main">Home</a>
+        <a class="top-btn" href="/physician-dashboard">Dashboard</a>
+      </nav>
+    </header>
+
+    <section class="panel">
+      <h1>Schedule and Follow-Ups</h1>
+      <p class="sub">Expand each visit for the kind of handoff details clinicians share: active concerns, meds, allergies, and quick care notes.</p>
+      <ul class="schedule-list">
+        <li>
+          <details class="row" open>
+            <summary>
+              <span class="time">09:00 AM</span>
+              <span><span class="patient">Mia Johnson</span> <span class="visit-type">Hypertension follow-up</span></span>
+              <span class="status">Confirmed</span>
+              <span class="chev">View Details</span>
+            </summary>
+            <div class="dropdown">
+              <div class="handoff">
+                <div class="field"><span class="label">Allergies</span><span class="value">Penicillin</span></div>
+                <div class="field"><span class="label">Current Meds</span><span class="value">Lisinopril 10mg</span></div>
+                <div class="field"><span class="label">Vitals Trend</span><span class="value">BP improving</span></div>
+              </div>
+              <p class="note">Recent update from prior provider: dizziness improved after evening dose adjustment. Recommend confirming hydration and home BP logs.</p>
+              <div class="row-actions">
+                <a href="/doctor-profile" class="btn btn-profile">View Patient Profile</a>
+                <a href="/doctor-profile" class="btn btn-msg">Contact Care Team</a>
+              </div>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="row">
+            <summary>
+              <span class="time">10:30 AM</span>
+              <span><span class="patient">Noah Patel</span> <span class="visit-type">Lab result review</span></span>
+              <span class="status">In Progress</span>
+              <span class="chev">View Details</span>
+            </summary>
+            <div class="dropdown">
+              <div class="handoff">
+                <div class="field"><span class="label">Allergies</span><span class="value">No known allergies</span></div>
+                <div class="field"><span class="label">Current Meds</span><span class="value">Metformin 500mg</span></div>
+                <div class="field"><span class="label">Concern</span><span class="value">HbA1c rise</span></div>
+              </div>
+              <p class="note">Care note: discuss nutrition referral and re-check labs in 8 weeks. Patient asked for portal summary after visit.</p>
+              <div class="row-actions">
+                <a href="/doctor-profile" class="btn btn-profile">View Patient Profile</a>
+                <a href="/doctor-profile" class="btn btn-msg">Contact Care Team</a>
+              </div>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details class="row">
+            <summary>
+              <span class="time">01:15 PM</span>
+              <span><span class="patient">Elena Ruiz</span> <span class="visit-type">Post-op check-in</span></span>
+              <span class="status">Pending</span>
+              <span class="chev">View Details</span>
+            </summary>
+            <div class="dropdown">
+              <div class="handoff">
+                <div class="field"><span class="label">Allergies</span><span class="value">Latex</span></div>
+                <div class="field"><span class="label">Current Meds</span><span class="value">Ibuprofen PRN</span></div>
+                <div class="field"><span class="label">Concern</span><span class="value">Incision tenderness</span></div>
+              </div>
+              <p class="note">Surgical team requested wound photo upload if redness increases. Consider home health check if pain score rises.</p>
+              <div class="row-actions">
+                <a href="/doctor-profile" class="btn btn-profile">View Patient Profile</a>
+                <a href="/doctor-profile" class="btn btn-msg">Contact Care Team</a>
+              </div>
+            </div>
+          </details>
+        </li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Follow-Up Queue</h2>
+      <ul class="follow-list">
+        <li class="follow-item"><span class="due">Due Today</span><span class="task">Medication tolerance check after dosage adjustment</span><span class="priority">High</span></li>
+        <li class="follow-item"><span class="due">Due Tomorrow</span><span class="task">Clarify lab panel findings and send summary note</span><span class="priority">Med</span></li>
+        <li class="follow-item"><span class="due">This Week</span><span class="task">Post-discharge check-in with cardiac care manager</span><span class="priority">Med</span></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
