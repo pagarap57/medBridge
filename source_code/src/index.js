@@ -1,282 +1,234 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
 const pgp = require('pg-promise')();
-const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const axios = require('axios');
-
 const http = require('http');
 const { Server } = require('socket.io');
 
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static(path.join(__dirname, 'views/public')));
+app.use(express.urlencoded({ extended: true }));
 
-app.use(bodyParser.urlencoded({extended:true}));
-
-app.use(session({
- secret:"medbridge-secret",
- saveUninitialized:false,
- resave:false
-}));
+app.use(
+  session({
+    name: 'medbridge.sid',
+    secret: process.env.SESSION_SECRET || 'medbridge-secret',
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production'
+    }
+  })
+);
 
 const db = pgp({
- host:'localhost',
- port:5432,
- database:'medbridge',
- user:'postgres',
- password:'postgres'
+  host: process.env.POSTGRES_HOST || 'localhost',
+  port: Number(process.env.POSTGRES_PORT || 5432),
+  database: process.env.POSTGRES_DB || 'medbridge',
+  user: process.env.POSTGRES_USER || 'postgres',
+  password: process.env.POSTGRES_PASSWORD || 'postgres'
 });
 
-function auth(req,res,next){
- if(!req.session.user){
-   return res.redirect('/login');
- }
- next();
+function sendPublic(res, fileName) {
+  res.sendFile(path.join(__dirname, 'views/public', fileName));
 }
 
-app.get('/',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/home.html'));
+function auth(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
+function isDoctor(req) {
+  return req.session.user?.role === 'doctor';
+}
+
+function doctorOnly(req, res, next) {
+  if (!isDoctor(req)) {
+    return res.redirect('/patient-main');
+  }
+  next();
+}
+
+app.get('/', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  sendPublic(res, 'home.html');
 });
 
-app.get('/login',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/login.html'));
+app.get('/home', (req, res) => {
+  res.redirect('/');
 });
 
-app.get('/signup',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/signup.html'));
+app.get('/login', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  sendPublic(res, 'login.html');
 });
 
-app.get('/main',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-main.html'));
+app.get('/signup', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  sendPublic(res, 'signup.html');
 });
 
-app.get('/maindoc',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/doctor-main.html'));
+app.post('/signup', async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+    const role = req.body.role === 'doctor' ? 'doctor' : 'patient';
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = await db.one(
+      `
+      INSERT INTO users(first_name, last_name, email, password, role)
+      VALUES($1, $2, $3, $4, $5)
+      RETURNING id, first_name, last_name, email, role
+      `,
+      [firstName, lastName, email, hash, role]
+    );
+
+    req.session.user = user;
+    req.session.save(() => res.redirect('/dashboard'));
+  } catch (err) {
+    console.error(err);
+    res.status(400).send('Signup failed');
+  }
 });
 
-app.get('/doctor-main',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/doctor-main.html'));
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await db.oneOrNone(
+      'SELECT id, first_name, last_name, email, password, role FROM users WHERE email=$1',
+      [email]
+    );
+
+    if (!user) {
+      return res.status(401).send('User not found');
+    }
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return res.status(401).send('Invalid password');
+    }
+
+    req.session.user = {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role
+    };
+
+    req.session.save(() => res.redirect('/dashboard'));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Login error');
+  }
 });
 
-app.get('/patient-main',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-main.html'));
+app.get('/dashboard', auth, (req, res) => {
+  if (isDoctor(req)) {
+    return res.redirect('/doctor-main');
+  }
+  res.redirect('/patient-main');
 });
 
-app.get('/talk-provider',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-talk-provider.html'));
+app.get('/main', auth, (req, res) => {
+  res.redirect('/patient-main');
 });
 
-app.get('/find-referral',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-find-referral.html'));
+app.get('/maindoc', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-main.html');
 });
 
-app.get('/profile-overview',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-profile-overview.html'));
+app.get('/doctor-main', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-main.html');
 });
 
-app.get('/patient-talk-provider',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-talk-provider.html'));
+app.get('/patient-main', auth, (req, res) => {
+  if (isDoctor(req)) {
+    return res.redirect('/doctor-main');
+  }
+  sendPublic(res, 'patient-main.html');
 });
 
-app.get('/patient-find-referral',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-find-referral.html'));
+app.get('/talk-provider', auth, (req, res) => {
+  res.redirect('/patient-talk-provider');
 });
 
-app.get('/patient-profile-overview',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/patient-profile-overview.html'));
+app.get('/find-referral', auth, (req, res) => {
+  res.redirect('/patient-find-referral');
 });
 
-app.get('/messaging',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/messaging.html'));
+app.get('/profile-overview', auth, (req, res) => {
+  res.redirect('/patient-profile-overview');
 });
 
-app.post('/signup',async(req,res)=>{
-
- try{
-
- const {firstName,lastName,email,password,role} = req.body;
-
- const hash = await bcrypt.hash(password,10);
-
- const user = await db.one(`
- INSERT INTO users(first_name,last_name,email,password,role)
- VALUES($1,$2,$3,$4,$5)
- RETURNING *
- `,[firstName,lastName,email,hash,role]);
-
- req.session.user = user;
-
- if(role === "doctor"){
-   res.redirect('/physician-dashboard');
- }else{
-   res.redirect('/patient-dashboard');
- }
-
- }catch(err){
- console.error(err);
- res.send("Signup failed");
- }
-
+app.get('/patient-talk-provider', auth, (req, res) => {
+  sendPublic(res, 'patient-talk-provider.html');
 });
 
-app.post('/login',async(req,res)=>{
-
- try{
-
- const {email,password} = req.body;
-
- const user = await db.oneOrNone(`
- SELECT * FROM users WHERE email=$1
- `,[email]);
-
- if(!user){
- return res.send("User not found");
- }
-
- const valid = await bcrypt.compare(password,user.password);
-
- if(!valid){
- return res.send("Invalid password");
- }
-
- req.session.user = user;
-
- if(user.role === "doctor"){
- res.redirect('/physician-dashboard');
- }else{
- res.redirect('/patient-dashboard');
- }
-
- }catch(err){
- console.error(err);
- res.send("Login error");
- }
-
+app.get('/patient-find-referral', auth, (req, res) => {
+  sendPublic(res, 'patient-find-referral.html');
 });
 
-app.get('/logout',(req,res)=>{
- req.session.destroy(()=>{
- res.redirect('/');
- });
+app.get('/patient-profile-overview', auth, (req, res) => {
+  sendPublic(res, 'patient-profile-overview.html');
 });
 
-app.get('/patient-dashboard',auth,async(req,res)=>{
-
- const patientId = req.session.user.id;
-
- const patient = await db.one(`
- SELECT * FROM patients WHERE id=$1
- `,[patientId]);
-
- const physicians = await db.any(`
- SELECT p.*
- FROM physicians p
- JOIN charts c ON c.physician_id=p.id
- WHERE c.patient_id=$1
- `,[patientId]);
-
- const appointments = await db.any(`
- SELECT a.*,ph.first_name,ph.last_name
- FROM appointments a
- JOIN physicians ph ON ph.id=a.physician_id
- WHERE a.patient_id=$1
- ORDER BY appointment_time
- `,[patientId]);
-
- res.render('pages/patient_dashboard',{
- patient,
- physicians,
- appointments
- });
-
+app.get('/doctor-schedule', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-schedule.html');
 });
 
-app.get('/physician-dashboard',auth,async(req,res)=>{
-
- const physicianId = req.session.user.id;
-
- const appointments = await db.any(`
- SELECT a.*,pa.first_name,pa.last_name
- FROM appointments a
- JOIN patients pa ON pa.id=a.patient_id
- WHERE a.physician_id=$1
- `,[physicianId]);
-
- const feedback = await db.any(`
- SELECT * FROM feedback
- WHERE physician_id=$1
- `,[physicianId]);
-
- res.render('pages/physician_dashboard',{
- appointments,
- feedback
- });
-
+app.get('/doctor-followups', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-followups.html');
 });
 
-app.get('/charts',auth,async(req,res)=>{
-
- const patientId = req.session.user.id;
-
- const charts = await db.any(`
- SELECT c.*,p.first_name,p.last_name
- FROM charts c
- JOIN physicians p
- ON c.physician_id=p.id
- WHERE patient_id=$1
- `,[patientId]);
-
- res.render('pages/charts',{charts});
-
+app.get('/doctor-profile', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-profile.html');
 });
 
-app.get('/messaging',auth,async(req,res)=>{
-
- const userId = req.session.user.id;
-
- const contacts = await db.any(`
- SELECT DISTINCT u.id,u.first_name,u.last_name
- FROM messages m
- JOIN users u
- ON (u.id=m.sender_id OR u.id=m.recipient_id)
- WHERE (m.sender_id=$1 OR m.recipient_id=$1)
- AND u.id != $1
- `,[userId]);
-
- res.render('pages/messaging',{
- activeUser:req.session.user,
- allFriends:contacts
- });
-
+app.get('/messaging', auth, (req, res) => {
+  sendPublic(res, 'messaging.html');
 });
 
-io.on('connection',(socket)=>{
-
- console.log("User connected",socket.id);
-
- socket.on('private-message',async({senderId,recipientId,content})=>{
-
- await db.none(`
- INSERT INTO messages(sender_id,recipient_id,content)
- VALUES($1,$2,$3)
- `,[senderId,recipientId,content]);
-
- io.emit('private-message',{
- senderId,
- recipientId,
- content
- });
-
- });
-
+app.get('/patient-dashboard', auth, (req, res) => {
+  res.redirect('/patient-find-referral');
 });
 
-const PORT = 3000;
+app.get('/physician-dashboard', auth, doctorOnly, (req, res) => {
+  res.redirect('/doctor-main');
+});
 
-server.listen(PORT,()=>{
- console.log("Server running on http://localhost:3000");
+app.get('/charts', auth, (req, res) => {
+  res.redirect('/patient-profile-overview');
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('medbridge.sid');
+    res.redirect('/login');
+  });
+});
+
+io.on('connection', (socket) => {
+  console.log('User connected', socket.id);
+});
+
+const PORT = Number(process.env.PORT || 3000);
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
