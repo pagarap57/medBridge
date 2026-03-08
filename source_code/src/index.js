@@ -15,20 +15,20 @@ app.use(express.static(path.join(__dirname, 'views/public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(
-  session({
-    name: 'medbridge.sid',
-    secret: process.env.SESSION_SECRET || 'medbridge-secret',
-    saveUninitialized: false,
-    resave: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
-    }
-  })
-);
+const sessionMiddleware = session({
+  name: 'medbridge.sid',
+  secret: process.env.SESSION_SECRET || 'medbridge-secret',
+  saveUninitialized: false,
+  resave: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
+  }
+});
+
+app.use(sessionMiddleware);
 
 const db = pgp({
   host: process.env.POSTGRES_HOST || 'localhost',
@@ -239,6 +239,81 @@ app.get('/api/me', auth, (req, res) => {
   });
 });
 
+app.get('/api/messages/conversations', auth, async (req, res) => {
+  try {
+    const currentUser = req.session.user;
+    const oppositeRole = currentUser.role === 'doctor' ? 'patient' : 'doctor';
+
+    const conversations = await db.any(
+      `SELECT u.id,
+              u.first_name,
+              u.last_name,
+              u.role,
+              COALESCE(last_msg.content, '') AS last_message,
+              last_msg.timestamp AS last_message_at
+       FROM users u
+       LEFT JOIN LATERAL (
+         SELECT m.content, m.timestamp
+         FROM messages m
+         WHERE (m.sender_id = $1 AND m.recipient_id = u.id)
+            OR (m.sender_id = u.id AND m.recipient_id = $1)
+         ORDER BY m.timestamp DESC, m.id DESC
+         LIMIT 1
+       ) AS last_msg ON true
+       WHERE u.role = $2
+       ORDER BY
+         CASE WHEN last_msg.timestamp IS NULL THEN 1 ELSE 0 END,
+         last_msg.timestamp DESC,
+         u.first_name ASC,
+         u.last_name ASC,
+         u.id ASC`,
+      [currentUser.id, oppositeRole]
+    );
+
+    return res.json({ conversations });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load conversations' });
+  }
+});
+
+app.get('/api/messages/thread/:otherUserId', auth, async (req, res) => {
+  try {
+    const currentUser = req.session.user;
+    const otherUserId = Number(req.params.otherUserId);
+
+    if (!Number.isInteger(otherUserId) || otherUserId <= 0) {
+      return res.status(400).json({ error: 'Invalid user id' });
+    }
+
+    const expectedRole = currentUser.role === 'doctor' ? 'patient' : 'doctor';
+    const counterpart = await db.oneOrNone(
+      `SELECT id, first_name, last_name, role
+       FROM users
+       WHERE id = $1 AND role = $2`,
+      [otherUserId, expectedRole]
+    );
+
+    if (!counterpart) {
+      return res.status(404).json({ error: 'Conversation partner not found' });
+    }
+
+    const messages = await db.any(
+      `SELECT id, sender_id, recipient_id, content, timestamp
+       FROM messages
+       WHERE (sender_id = $1 AND recipient_id = $2)
+          OR (sender_id = $2 AND recipient_id = $1)
+       ORDER BY timestamp ASC, id ASC`,
+      [currentUser.id, otherUserId]
+    );
+
+    return res.json({ counterpart, messages });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load thread' });
+  }
+});
+
 app.get('/api/referrals', auth, async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -363,28 +438,65 @@ app.get('/logout', (req, res) => {
   });
 });
 
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
 
-  socket.on("chat message", async (msg) => {
+io.on('connection', (socket) => {
+  const user = socket.request.session?.user;
+  if (!user) {
+    socket.disconnect(true);
+    return;
+  }
 
+  const room = `user:${user.id}`;
+  socket.join(room);
+  console.log('User connected:', socket.id, 'user:', user.id);
+
+  socket.on('chat message', async (msg) => {
     try {
+      const recipientId = Number(msg.recipient);
+      const text = typeof msg.text === 'string' ? msg.text.trim() : '';
 
-      await db.none(
-        "INSERT INTO messages(sender_id, recipient_id, content) VALUES($1,$2,$3)",
-        [msg.sender, msg.recipient, msg.text]
+      if (!Number.isInteger(recipientId) || recipientId <= 0 || !text) {
+        return;
+      }
+
+      const expectedRole = user.role === 'doctor' ? 'patient' : 'doctor';
+      const recipient = await db.oneOrNone(
+        `SELECT id
+         FROM users
+         WHERE id = $1 AND role = $2`,
+        [recipientId, expectedRole]
       );
 
+      if (!recipient) {
+        return;
+      }
+
+      const saved = await db.one(
+        `INSERT INTO messages(sender_id, recipient_id, content)
+         VALUES($1, $2, $3)
+         RETURNING id, sender_id, recipient_id, content, timestamp`,
+        [user.id, recipientId, text]
+      );
+
+      const payload = {
+        id: saved.id,
+        sender: saved.sender_id,
+        recipient: saved.recipient_id,
+        text: saved.content,
+        timestamp: saved.timestamp
+      };
+
+      io.to(`user:${saved.sender_id}`).to(`user:${saved.recipient_id}`).emit('chat message', payload);
     } catch (err) {
-      console.error("DB insert failed:", err);
+      console.error('DB insert failed:', err);
     }
-
-    io.emit("chat message", msg);
-
   });
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id, 'user:', user.id);
   });
 });
 

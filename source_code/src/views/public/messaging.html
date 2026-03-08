@@ -242,71 +242,14 @@ const messages = document.querySelector(".messages");
 const conversationList = document.getElementById("conversationList");
 const chatHeader = document.getElementById("chatHeader");
 
-const DOCTOR_CONVERSATIONS = [
-  {
-    name: "Mia Johnson",
-    roleLabel: "Client",
-    preview: "Can we review my blood pressure plan?",
-    thread: [
-      { text: "Hi Dr. Patel, I reviewed the referral options.", received: true },
-      { text: "Can you send one to a clinic close to Denver?", received: true },
-      { text: "Yes, I can send that now and follow up today.", received: false },
-      { text: "Thank you, that works for me.", received: true }
-    ]
-  },
-  {
-    name: "Noah Patel",
-    roleLabel: "Client",
-    preview: "I uploaded my glucose log.",
-    thread: [
-      { text: "I uploaded my glucose log to the portal.", received: true },
-      { text: "Perfect, I will review it before our follow-up.", received: false }
-    ]
-  },
-  {
-    name: "Elena Ruiz",
-    roleLabel: "Client",
-    preview: "My follow-up pain is improving.",
-    thread: [
-      { text: "My follow-up pain is improving this week.", received: true },
-      { text: "Good progress. Keep the same care plan for now.", received: false }
-    ]
-  }
-];
-
-const PATIENT_CONVERSATIONS = [
-  {
-    name: "Dr. Aisha Khan",
-    roleLabel: "Doctor",
-    preview: "Your referral request was approved.",
-    thread: [
-      { text: "Your referral request was approved.", received: true },
-      { text: "Great, when should I call the specialist office?", received: false },
-      { text: "You can call this afternoon. I added details to your chart.", received: true }
-    ]
-  },
-  {
-    name: "Dr. Marcus Lee",
-    roleLabel: "Doctor",
-    preview: "Please continue your current meds.",
-    thread: [
-      { text: "Please continue your current meds until Friday.", received: true },
-      { text: "Got it, I will keep the same schedule.", received: false }
-    ]
-  },
-  {
-    name: "Dr. Priya Nair",
-    roleLabel: "Doctor",
-    preview: "Let me know if symptoms increase.",
-    thread: [
-      { text: "Let me know if symptoms increase before your visit.", received: true },
-      { text: "Will do, thank you for checking in.", received: false }
-    ]
-  }
+const DUMMY_THREAD = [
+  { text: "Welcome to MedBridge messages.", senderRole: "system" },
+  { text: "Real chat appears once both sides have accounts and send messages.", senderRole: "system" }
 ];
 
 let currentUser = null;
 let activeConversation = null;
+let conversations = [];
 
 button.onclick = sendMessage;
 input.addEventListener("keypress", function(e){
@@ -316,29 +259,28 @@ input.addEventListener("keypress", function(e){
 });
 
 function sendMessage(){
-
+  if(!currentUser || !activeConversation || activeConversation.isDummy) return;
   const text = input.value.trim();
   if(!text) return;
 
-  renderMessage(text, false);
-
-  const senderId = currentUser?.id || 1;
-  const recipientId = activeConversation?.recipientId || 2;
   const message = {
-    sender: senderId,
-    recipient: recipientId,
+    recipient: activeConversation.id,
     text: text
   };
 
   socket.emit("chat message", message);
-
   input.value="";
 }
 
 socket.on("chat message", function(msg){
-  if(!currentUser) return;
-  if(msg.sender === currentUser.id) return;
-  renderMessage(msg.text, true);
+  if(!currentUser || !activeConversation || !msg) return;
+  const isCurrentThread =
+    (msg.sender === currentUser.id && msg.recipient === activeConversation.id) ||
+    (msg.sender === activeConversation.id && msg.recipient === currentUser.id);
+
+  if(!isCurrentThread) return;
+  renderMessage(msg.text, msg.sender !== currentUser.id);
+  updateConversationPreview(activeConversation.id, msg.text);
 });
 
 function renderMessage(text, isReceived){
@@ -349,23 +291,56 @@ function renderMessage(text, isReceived){
   messages.scrollTop = messages.scrollHeight;
 }
 
-function renderThread(conversation){
+function renderThreadEntries(entries){
   messages.innerHTML = "";
-  chatHeader.textContent = `${conversation.name} \u2014 ${conversation.roleLabel}`;
-
-  conversation.thread.forEach((entry) => {
-    renderMessage(entry.text, entry.received);
+  entries.forEach((entry) => {
+    const received = entry.sender_id !== currentUser.id;
+    renderMessage(entry.content || entry.text, received);
   });
 }
 
-function setActiveConversation(index, list){
-  activeConversation = list[index];
+function updateConversationPreview(conversationId, text){
+  const conversation = conversations.find((item) => item.id === conversationId);
+  if(!conversation) return;
+  conversation.last_message = text;
+  const preview = document.querySelector(`.conversation[data-id="${conversationId}"] .conversation-preview`);
+  if(preview){
+    preview.textContent = text;
+  }
+}
+
+async function setActiveConversation(index){
+  activeConversation = conversations[index];
 
   Array.from(conversationList.querySelectorAll(".conversation")).forEach((item, itemIndex) => {
     item.classList.toggle("active", itemIndex === index);
   });
 
-  renderThread(activeConversation);
+  chatHeader.textContent = `${activeConversation.name} \u2014 ${activeConversation.roleLabel}`;
+
+  if(activeConversation.isDummy){
+    renderThreadEntries(DUMMY_THREAD);
+    input.disabled = true;
+    button.disabled = true;
+    input.placeholder = "Create a real doctor/patient account to start messaging.";
+    return;
+  }
+
+  input.disabled = false;
+  button.disabled = false;
+  input.placeholder = "Type a message...";
+
+  try{
+    const response = await fetch(`/api/messages/thread/${activeConversation.id}`);
+    if(!response.ok){
+      throw new Error("Failed to load thread");
+    }
+    const data = await response.json();
+    renderThreadEntries(data.messages || []);
+  } catch (err){
+    console.error(err);
+    renderThreadEntries([{ text: "Could not load this conversation." }]);
+  }
 }
 
 function renderConversations(list){
@@ -374,19 +349,30 @@ function renderConversations(list){
   list.forEach((conversation, index) => {
     const card = document.createElement("div");
     card.className = "conversation";
+    if(conversation.id){
+      card.dataset.id = conversation.id;
+    }
+    const previewText = conversation.last_message || conversation.preview || "No messages yet.";
     card.innerHTML = `
       <div class="conversation-name">${conversation.name}</div>
-      <div class="conversation-preview">${conversation.preview}</div>
+      <div class="conversation-preview">${previewText}</div>
     `;
 
     card.addEventListener("click", () => {
-      setActiveConversation(index, list);
+      setActiveConversation(index);
     });
 
     conversationList.appendChild(card);
   });
 
-  setActiveConversation(0, list);
+  if(list.length > 0){
+    setActiveConversation(0);
+  } else {
+    chatHeader.textContent = "No conversations available";
+    messages.innerHTML = "";
+    input.disabled = true;
+    button.disabled = true;
+  }
 }
 
 async function initMessaging(){
@@ -399,12 +385,39 @@ async function initMessaging(){
     const data = await response.json();
     currentUser = data.user;
 
-    const list = currentUser.role === "doctor" ? DOCTOR_CONVERSATIONS : PATIENT_CONVERSATIONS;
-    renderConversations(list);
+    const convoResponse = await fetch("/api/messages/conversations");
+    if(!convoResponse.ok){
+      throw new Error("Failed to fetch conversations");
+    }
+    const convoData = await convoResponse.json();
+
+    conversations = (convoData.conversations || []).map((item) => ({
+      id: item.id,
+      name: `${item.first_name} ${item.last_name}`,
+      roleLabel: item.role === "doctor" ? "Doctor" : "Client",
+      last_message: item.last_message
+    }));
+
+    if(conversations.length === 0){
+      conversations = [
+        {
+          id: null,
+          name: currentUser.role === "doctor" ? "Demo Client" : "Demo Doctor",
+          roleLabel: currentUser.role === "doctor" ? "Client" : "Doctor",
+          preview: "No matching accounts yet.",
+          isDummy: true
+        }
+      ];
+    }
+
+    renderConversations(conversations);
   } catch (err){
     console.error(err);
     currentUser = { id: 1, role: "doctor" };
-    renderConversations(DOCTOR_CONVERSATIONS);
+    conversations = [
+      { id: null, name: "Demo Client", roleLabel: "Client", preview: "Offline mode", isDummy: true }
+    ];
+    renderConversations(conversations);
   }
 }
 
