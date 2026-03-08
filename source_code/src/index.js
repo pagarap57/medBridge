@@ -52,6 +52,16 @@ function isDoctor(req) {
   return req.session.user?.role === 'doctor';
 }
 
+<<<<<<< HEAD
+=======
+function doctorOnly(req, res, next) {
+  if (!isDoctor(req)) {
+    return res.redirect('/patient-main');
+  }
+  next();
+}
+
+>>>>>>> main
 app.get('/', (req, res) => {
   if (req.session.user) {
     return res.redirect('/dashboard');
@@ -93,9 +103,13 @@ app.post('/signup', async (req, res) => {
     );
 
     req.session.user = user;
+<<<<<<< HEAD
     req.session.save(() => {
       res.redirect('/dashboard');
     });
+=======
+    req.session.save(() => res.redirect('/dashboard'));
+>>>>>>> main
   } catch (err) {
     console.error(err);
     res.status(400).send('Signup failed');
@@ -127,9 +141,13 @@ app.post('/login', async (req, res) => {
       role: user.role
     };
 
+<<<<<<< HEAD
     req.session.save(() => {
       res.redirect('/dashboard');
     });
+=======
+    req.session.save(() => res.redirect('/dashboard'));
+>>>>>>> main
   } catch (err) {
     console.error(err);
     res.status(500).send('Login error');
@@ -138,6 +156,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/dashboard', auth, (req, res) => {
   if (isDoctor(req)) {
+<<<<<<< HEAD
     return res.redirect('/maindoc');
   }
   res.redirect('/main');
@@ -185,6 +204,84 @@ app.get('/charts', auth, (req, res) => {
   res.redirect('/profile-overview');
 });
 
+=======
+    return res.redirect('/doctor-main');
+  }
+  res.redirect('/patient-main');
+});
+
+app.get('/main', auth, (req, res) => {
+  res.redirect('/patient-main');
+});
+
+app.get('/maindoc', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-main.html');
+});
+
+app.get('/doctor-main', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-main.html');
+});
+
+app.get('/patient-main', auth, (req, res) => {
+  if (isDoctor(req)) {
+    return res.redirect('/doctor-main');
+  }
+  sendPublic(res, 'patient-main.html');
+});
+
+app.get('/talk-provider', auth, (req, res) => {
+  res.redirect('/patient-talk-provider');
+});
+
+app.get('/find-referral', auth, (req, res) => {
+  res.redirect('/patient-find-referral');
+});
+
+app.get('/profile-overview', auth, (req, res) => {
+  res.redirect('/patient-profile-overview');
+});
+
+app.get('/patient-talk-provider', auth, (req, res) => {
+  sendPublic(res, 'patient-talk-provider.html');
+});
+
+app.get('/patient-find-referral', auth, (req, res) => {
+  sendPublic(res, 'patient-find-referral.html');
+});
+
+app.get('/patient-profile-overview', auth, (req, res) => {
+  sendPublic(res, 'patient-profile-overview.html');
+});
+
+app.get('/doctor-schedule', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-schedule.html');
+});
+
+app.get('/doctor-followups', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-followups.html');
+});
+
+app.get('/doctor-profile', auth, doctorOnly, (req, res) => {
+  sendPublic(res, 'doctor-profile.html');
+});
+
+app.get('/messaging', auth, (req, res) => {
+  sendPublic(res, 'messaging.html');
+});
+
+app.get('/patient-dashboard', auth, (req, res) => {
+  res.redirect('/patient-find-referral');
+});
+
+app.get('/physician-dashboard', auth, doctorOnly, (req, res) => {
+  res.redirect('/doctor-main');
+});
+
+app.get('/charts', auth, (req, res) => {
+  res.redirect('/patient-profile-overview');
+});
+
+>>>>>>> main
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.clearCookie('medbridge.sid');

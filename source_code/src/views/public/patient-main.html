@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedBridge Doctor Main</title>
+  <title>MedBridge Patient Main</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
     .page { max-width: 1300px; margin: 0 auto; padding: 28px 32px 48px; }
     .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 46px; }
     .logo { font-family: "Marcellus SC", serif; font-size: 3.4rem; line-height: 1; color: #0f4d4f; letter-spacing: 0.02em; text-decoration: none; }
@@ -41,54 +41,52 @@
 <body>
   <main class="page">
     <header class="topbar">
-      <a class="logo" href="/doctor-main">MedBridge</a>
+      <a class="logo" href="/patient-main">MedBridge</a>
       <nav class="topbar-actions">
-        <a class="top-btn" href="/doctor-main">Home</a>
+        <a class="top-btn" href="/patient-main">Home</a>
         <button type="button" class="top-btn" id="notifications-btn">Notifications</button>
-        <a class="top-btn" href="/logout">Log out</a>
         <div class="notification-panel" id="notification-panel">No notifications currently.</div>
       </nav>
     </header>
 
     <section>
-      <p class="intro">At MedBridge, we help care teams streamline clinical workflows and respond to patients faster.</p>
+      <p class="intro">At MedBridge, we help patients find care quickly and stay connected through every step of treatment.</p>
     </section>
 
     <section class="grid">
       <div class="left-column">
-        <a href="/doctor-schedule" class="card-link">
+        <a href="/patient-talk-provider" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Schedule + Follow-Ups</h2>
-              <p>Manage daily appointments, expand patient handoff details, and handle follow-up tasks in one workflow.</p>
+              <h2>Talk to Your Primary Care Provider</h2>
+              <p>Send non-urgent questions, request appointments, and follow up without long wait times.</p>
             </div>
             <div class="image-area small-image gradient-one"></div>
           </article>
         </a>
 
-        <a href="/doctor-followups" class="card-link">
+        <a href="/patient-find-referral" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Send Referrals</h2>
-              <p>Create and track specialist referrals with quick access to provider profile actions.</p>
+              <h2>Find a Specialist</h2>
+              <p>Search for specialists by condition, location, or service and move your referral forward.</p>
             </div>
             <div class="image-area small-image gradient-two"></div>
           </article>
         </a>
       </div>
 
-      <a href="/doctor-profile" class="card-link">
+      <a href="/patient-profile-overview" class="card-link">
         <article class="card">
           <div class="card-text">
-            <h2>Review Your Physician Profile</h2>
-            <p>Keep your specialty details, credentials, and recent clinical activity organized in one place.</p>
+            <h2>View Your Profile</h2>
+            <p>Check your history, account details, and care activity all in one place.</p>
           </div>
           <div class="image-area large-image gradient-three"></div>
         </article>
       </a>
     </section>
   </main>
-
   <script>
     const notificationsBtn = document.getElementById("notifications-btn");
     const notificationPanel = document.getElementById("notification-panel");
