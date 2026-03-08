@@ -49,35 +49,57 @@
       line-height: 1;
       color: #0f4d4f;
       letter-spacing: 0.02em;
+      text-decoration: none;
     }
 
-    .socials {
+    .topbar-actions {
       display: flex;
       align-items: center;
-      gap: 18px;
-      color: #8a8585;
+      gap: 12px;
+      position: relative;
     }
 
-    .socials a {
-      color: inherit;
+    .top-btn {
       text-decoration: none;
+      color: #17353b;
+      background: #f3eeee;
+      border: 1px solid rgba(16, 41, 52, 0.18);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      transition: transform 0.18s ease, opacity 0.18s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }
 
-    .socials a:hover {
+    .top-btn:hover {
       transform: translateY(-2px);
-      opacity: 0.8;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
     }
 
-    .socials svg {
-      width: 31px;
-      height: 31px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
+    .notification-panel {
+      position: absolute;
+      top: 48px;
+      right: 0;
+      min-width: 230px;
+      background: #f7f3f3;
+      border: 1px solid rgba(16, 41, 52, 0.16);
+      border-radius: 12px;
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.12);
+      padding: 12px 14px;
+      color: #4f4a4a;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: none;
+      z-index: 20;
+    }
+
+    .notification-panel.show {
+      display: block;
     }
 
     .intro {
@@ -218,15 +240,6 @@
         font-size: 2.6rem;
       }
 
-      .socials {
-        gap: 12px;
-      }
-
-      .socials svg {
-        width: 26px;
-        height: 26px;
-      }
-
       .card-text {
         padding: 22px 22px 20px;
       }
@@ -244,33 +257,37 @@
 <body>
   <main class="page">
     <header class="topbar">
-      <div class="logo">MedBridge</div>
+      <a class="logo" href="/main">MedBridge</a>
+      <nav class="topbar-actions">
+        <a class="top-btn" href="/main">Home</a>
+        <button type="button" class="top-btn" id="notifications-btn">Notifications</button>
+        <div class="notification-panel" id="notification-panel">No notifications currently.</div>
       </nav>
     </header>
 
     <section>
       <p class="intro">
-        At MedBridge, we aim to reduce the time it takes for our patients to access care.
+        At MedBridge, we help care teams streamline clinical workflows and respond to patients faster.
       </p>
     </section>
 
     <section class="grid">
       <div class="left-column">
-        <a href="/talk-provider" class="card-link">
+        <a href="/physician-dashboard" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Talk to your primary care provider</h2>
-              <p>Are you trying to book an appointment with your primary care? Send them a message and get connected faster.</p>
+              <h2>Manage Appointment Schedule</h2>
+              <p>Review today's visits, update time slots, and keep your clinic schedule running on time.</p>
             </div>
             <div class="image-area small-image gradient-one"></div>
           </article>
         </a>
 
-        <a href="/find-referral" class="card-link">
+        <a href="/messaging" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Find a referral</h2>
-              <p>Search for specialist recommendations, browse suggested providers, and follow the next step in your care path.</p>
+              <h2>Coordinate Patient Follow-Ups</h2>
+              <p>Send care instructions, answer patient questions, and track post-visit follow-up communication.</p>
             </div>
             <div class="image-area small-image gradient-two"></div>
           </article>
@@ -288,5 +305,19 @@
       </a>
     </section>
   </main>
+  <script>
+    const notificationsBtn = document.getElementById("notifications-btn");
+    const notificationPanel = document.getElementById("notification-panel");
+
+    notificationsBtn.addEventListener("click", () => {
+      notificationPanel.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!notificationPanel.contains(event.target) && event.target !== notificationsBtn) {
+        notificationPanel.classList.remove("show");
+      }
+    });
+  </script>
 </body>
 </html>

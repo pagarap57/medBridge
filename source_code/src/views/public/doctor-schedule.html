@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Schedule | MedBridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Inter", sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; }
+    .page { max-width: 1180px; margin: 0 auto; padding: 26px 30px 46px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .logo { font-family: "Marcellus SC", serif; font-size: 3rem; color: #0f4d4f; text-decoration: none; }
+    .topbar-actions { display: flex; gap: 12px; align-items: center; }
+    .top-btn { text-decoration: none; color: #17353b; background: #f3eeee; border: 1px solid rgba(16,41,52,0.18); border-radius: 12px; padding: 9px 14px; font-size: 0.92rem; font-weight: 600; }
+    .panel { background: #dfd8d8; border-radius: 22px; padding: 28px; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; }
+    h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 3.8vw, 2.8rem); margin-bottom: 8px; }
+    .sub { color: #5f5a5a; margin-bottom: 20px; line-height: 1.5; }
+    .schedule-list { list-style: none; display: grid; gap: 12px; }
+    .schedule-item { background: rgba(255,255,255,0.5); border-radius: 14px; padding: 14px; display: grid; grid-template-columns: 120px 1fr 170px; gap: 14px; align-items: center; }
+    .time { font-weight: 700; color: #17353b; }
+    .patient { font-weight: 600; color: #171616; }
+    .reason { color: #5f5a5a; font-size: 0.93rem; margin-top: 2px; }
+    .status { justify-self: end; font-size: 0.8rem; font-weight: 700; color: #2b4f58; background: rgba(75,125,138,0.16); padding: 8px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .actions { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .action-btn { text-decoration: none; border-radius: 999px; padding: 11px 18px; font-weight: 700; font-size: 0.92rem; }
+    .action-primary { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
+    .action-secondary { color: #17353b; background: rgba(255,255,255,0.55); border: 1px solid rgba(16,41,52,0.18); }
+    @media (max-width: 760px) {
+      .page { padding: 20px 16px 34px; }
+      .logo { font-size: 2.4rem; }
+      .schedule-item { grid-template-columns: 1fr; }
+      .status { justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="logo" href="/maindoc">MedBridge</a>
+      <nav class="topbar-actions">
+        <a class="top-btn" href="/maindoc">Home</a>
+        <a class="top-btn" href="/physician-dashboard">Dashboard</a>
+      </nav>
+    </header>
+
+    <section class="panel">
+      <h1>Manage Appointment Schedule</h1>
+      <p class="sub">Review upcoming appointments, identify delays early, and keep patient flow on track throughout the day.</p>
+      <ul class="schedule-list">
+        <li class="schedule-item">
+          <div class="time">09:00 AM</div>
+          <div><div class="patient">Mia Johnson</div><div class="reason">Hypertension follow-up</div></div>
+          <div class="status">Confirmed</div>
+        </li>
+        <li class="schedule-item">
+          <div class="time">10:30 AM</div>
+          <div><div class="patient">Noah Patel</div><div class="reason">Lab result review</div></div>
+          <div class="status">In Progress</div>
+        </li>
+        <li class="schedule-item">
+          <div class="time">01:15 PM</div>
+          <div><div class="patient">Elena Ruiz</div><div class="reason">Post-op check-in</div></div>
+          <div class="status">Pending</div>
+        </li>
+      </ul>
+      <div class="actions">
+        <a href="/physician-dashboard" class="action-btn action-primary">Open Full Dashboard</a>
+        <a href="/maindoc" class="action-btn action-secondary">Back to Doctor Home</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Profile | MedBridge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #ebe6e6;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 26px 30px 46px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .logo {
+      font-family: "Marcellus SC", serif;
+      font-size: 3.1rem;
+      line-height: 1;
+      color: #0f4d4f;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      position: relative;
+    }
+
+    .top-btn {
+      text-decoration: none;
+      color: #17353b;
+      background: #f3eeee;
+      border: 1px solid rgba(16, 41, 52, 0.18);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+    }
+
+    .notification-panel {
+      position: absolute;
+      top: 48px;
+      right: 0;
+      min-width: 230px;
+      background: #f7f3f3;
+      border: 1px solid rgba(16, 41, 52, 0.16);
+      border-radius: 12px;
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.12);
+      padding: 12px 14px;
+      color: #4f4a4a;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: none;
+      z-index: 20;
+    }
+
+    .notification-panel.show {
+      display: block;
+    }
+
+    .hero-card,
+    .history-card {
+      background: #dfd8d8;
+      border-radius: 22px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+    }
+
+    .hero-card {
+      padding: 30px;
+      margin-bottom: 26px;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .avatar {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #b9b6b6 0%, #999696 100%);
+      border: 3px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .title-row h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(2rem, 4vw, 2.7rem);
+      line-height: 1.08;
+      margin-bottom: 5px;
+      color: #111;
+    }
+
+    .title-row p {
+      color: #5f5a5a;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.42);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .label {
+      display: block;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6a6565;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .value {
+      font-size: 0.97rem;
+      color: #181717;
+      font-weight: 600;
+    }
+
+    .history-card {
+      padding: 26px;
+    }
+
+    .history-card h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      margin-bottom: 14px;
+      color: #111;
+    }
+
+    .history-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-item {
+      background: rgba(255, 255, 255, 0.52);
+      border-radius: 14px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .history-date {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #4e4a4a;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .history-details h3 {
+      font-size: 1rem;
+      color: #141313;
+      margin-bottom: 3px;
+    }
+
+    .history-details p {
+      color: #5f5a5a;
+      line-height: 1.45;
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-card {
+        grid-template-columns: 1fr;
+      }
+
+      .avatar-wrap {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 20px 16px 34px;
+      }
+
+      .logo {
+        font-size: 2.4rem;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="logo" href="/main">MedBridge</a>
+      <nav class="topbar-actions">
+        <a class="top-btn" href="/main">Home</a>
+        <button type="button" class="top-btn" id="notifications-btn">Notifications</button>
+        <div class="notification-panel" id="notification-panel">No notifications currently.</div>
+      </nav>
+    </header>
+
+    <section class="hero-card">
+      <div class="avatar-wrap">
+        <div class="avatar" aria-label="Patient profile picture placeholder"></div>
+      </div>
+
+      <div>
+        <div class="title-row">
+          <h1>Patient Profile</h1>
+          <p>Overview of personal details, care team, and recent activity.</p>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Full Name</span>
+            <span class="value">Jordan Smith</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date of Birth</span>
+            <span class="value">May 14, 1992</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Patient ID</span>
+            <span class="value">MB-10483</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Primary Provider</span>
+            <span class="value">Dr. Avery Chen</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Insurance</span>
+            <span class="value">BlueCross BlueShield</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Preferred Pharmacy</span>
+            <span class="value">Greenwood Pharmacy</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="history-card">
+      <h2>History</h2>
+      <ul class="history-list">
+        <li class="history-item">
+          <div class="history-date">Feb 25, 2026</div>
+          <div class="history-details">
+            <h3>Annual Physical Follow-Up</h3>
+            <p>Lab panel reviewed. Vitamin D supplementation recommended and follow-up in 3 months.</p>
+          </div>
+        </li>
+        <li class="history-item">
+          <div class="history-date">Jan 12, 2026</div>
+          <div class="history-details">
+            <h3>Cardiology Referral Created</h3>
+            <p>Referral submitted for specialist evaluation due to recurring chest discomfort during exercise.</p>
+          </div>
+        </li>
+        <li class="history-item">
+          <div class="history-date">Nov 03, 2025</div>
+          <div class="history-details">
+            <h3>Medication Adjustment</h3>
+            <p>Blood pressure medication dosage updated based on home monitoring trends.</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    const notificationsBtn = document.getElementById("notifications-btn");
+    const notificationPanel = document.getElementById("notification-panel");
+
+    notificationsBtn.addEventListener("click", () => {
+      notificationPanel.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!notificationPanel.contains(event.target) && event.target !== notificationsBtn) {
+        notificationPanel.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>

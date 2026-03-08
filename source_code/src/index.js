@@ -54,6 +54,10 @@ app.get('/main',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/main.html'));
 });
 
+app.get('/maindoc',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/maindoc.html'));
+});
+
 app.get('/talk-provider',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/talk-provider.html'));
 });
@@ -64,6 +68,18 @@ app.get('/find-referral',(req,res)=>{
 
 app.get('/profile-overview',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/profile-overview.html'));
+});
+
+app.get('/doctor-schedule',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/doctor-schedule.html'));
+});
+
+app.get('/doctor-followups',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/doctor-followups.html'));
+});
+
+app.get('/doctor-profile',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/doctor-profile.html'));
 });
 
 app.post('/signup',async(req,res)=>{
