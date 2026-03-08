@@ -51,23 +51,43 @@ app.get('/signup',(req,res)=>{
 });
 
 app.get('/main',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/main.html'));
+ res.sendFile(path.join(__dirname,'views/public/patient-main.html'));
 });
 
 app.get('/maindoc',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/maindoc.html'));
+ res.sendFile(path.join(__dirname,'views/public/doctor-main.html'));
+});
+
+app.get('/doctor-main',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/doctor-main.html'));
+});
+
+app.get('/patient-main',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/patient-main.html'));
 });
 
 app.get('/talk-provider',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/talk-provider.html'));
+ res.sendFile(path.join(__dirname,'views/public/patient-talk-provider.html'));
 });
 
 app.get('/find-referral',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/find-referral.html'));
+ res.sendFile(path.join(__dirname,'views/public/patient-find-referral.html'));
 });
 
 app.get('/profile-overview',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/profile-overview.html'));
+ res.sendFile(path.join(__dirname,'views/public/patient-profile-overview.html'));
+});
+
+app.get('/patient-talk-provider',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/patient-talk-provider.html'));
+});
+
+app.get('/patient-find-referral',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/patient-find-referral.html'));
+});
+
+app.get('/patient-profile-overview',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/patient-profile-overview.html'));
 });
 
 app.get('/doctor-schedule',(req,res)=>{

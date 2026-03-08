@@ -3,318 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedBridge Main </title>
-
+  <title>MedBridge Patient Main</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Marcellus+SC&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
   <style>
-    .marcellus-sc-regular {
-  font-family: "Marcellus SC", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #ebe6e6;
-      color: #111;
-      min-height: 100vh;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    .page {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 28px 32px 48px;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 46px;
-    }
-
-    .logo {
-      font-family: "Marcellus SC", serif;
-      font-size: 3.4rem;
-      line-height: 1;
-      color: #0f4d4f;
-      letter-spacing: 0.02em;
-      text-decoration: none;
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-    }
-
-    .top-btn {
-      text-decoration: none;
-      color: #17353b;
-      background: #f3eeee;
-      border: 1px solid rgba(16, 41, 52, 0.18);
-      border-radius: 12px;
-      padding: 9px 14px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-    }
-
-    .top-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08);
-      background: #ffffff;
-    }
-
-    .notification-panel {
-      position: absolute;
-      top: 48px;
-      right: 0;
-      min-width: 230px;
-      background: #f7f3f3;
-      border: 1px solid rgba(16, 41, 52, 0.16);
-      border-radius: 12px;
-      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.12);
-      padding: 12px 14px;
-      color: #4f4a4a;
-      font-size: 0.92rem;
-      font-weight: 500;
-      display: none;
-      z-index: 20;
-    }
-
-    .notification-panel.show {
-      display: block;
-    }
-
-    .intro {
-      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
-      font-weight: 500;
-      line-height: 1.35;
-      max-width: 1000px;
-      margin: 0 0 34px 34px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      align-items: start;
-    }
-
-    .left-column {
-      display: grid;
-      gap: 32px;
-    }
-
-    .card {
-      background: #dfd8d8;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-    }
-
-    .card-text {
-      padding: 30px 34px 28px;
-    }
-
-    .card h2 {
-      font-size: clamp(1.9rem, 2vw, 2.5rem);
-      line-height: 1.1;
-      margin-bottom: 14px;
-      font-weight: 700;
-      color: #111;
-    }
-
-    .card p {
-      font-size: 1rem;
-      line-height: 1.45;
-      color: #666;
-      max-width: 90%;
-    }
-
-    .image-area {
-      width: 100%;
-    }
-
-    .small-image {
-      height: 250px;
-    }
-
-    .large-image {
-      height: 600px;
-    }
-
-    .gradient-one {
-      background:
-        radial-gradient(circle at 18% 72%, rgba(255, 93, 74, 0.95), transparent 24%),
-        radial-gradient(circle at 34% 38%, rgba(214, 143, 170, 0.65), transparent 25%),
-        radial-gradient(circle at 70% 55%, rgba(185, 214, 217, 0.8), transparent 28%),
-        radial-gradient(circle at 88% 45%, rgba(232, 220, 200, 0.65), transparent 24%),
-        linear-gradient(90deg, #9aa4da 0%, #c8a2b1 25%, #b6c7cf 60%, #d7d1c3 100%);
-      filter: saturate(1.05);
-    }
-
-    .gradient-two {
-      background:
-        radial-gradient(circle at 20% 30%, rgba(65, 52, 135, 0.7), transparent 28%),
-        radial-gradient(circle at 52% 72%, rgba(220, 96, 168, 0.6), transparent 24%),
-        radial-gradient(circle at 82% 22%, rgba(42, 49, 118, 0.75), transparent 24%),
-        linear-gradient(120deg, #4e438c 0%, #7e5ba8 38%, #d16ca8 68%, #6a5bb4 100%);
-      position: relative;
-    }
-
-    .gradient-two::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(255,255,255,0.04) 0px,
-        rgba(255,255,255,0.04) 1px,
-        transparent 2px,
-        transparent 4px
-      );
-      mix-blend-mode: soft-light;
-      opacity: 0.45;
-    }
-
-    .gradient-three {
-      background:
-        radial-gradient(circle at 14% 20%, rgba(233, 207, 196, 0.9), transparent 18%),
-        radial-gradient(circle at 52% 20%, rgba(215, 210, 243, 0.92), transparent 22%),
-        radial-gradient(circle at 88% 16%, rgba(11, 74, 208, 0.95), transparent 24%),
-        radial-gradient(circle at 15% 88%, rgba(102, 124, 234, 0.65), transparent 20%),
-        radial-gradient(circle at 70% 76%, rgba(98, 78, 163, 0.72), transparent 26%),
-        linear-gradient(90deg, #ddc9c5 0%, #cfcee6 33%, #0f43c8 74%, #5f4f97 100%);
-      filter: saturate(1.05);
-    }
-
-    .card-link {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-
-    @media (max-width: 980px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .large-image {
-        height: 320px;
-      }
-
-      .intro {
-        margin-left: 0;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .page {
-        padding: 22px 18px 36px;
-      }
-
-      .logo {
-        font-size: 2.6rem;
-      }
-
-      .card-text {
-        padding: 22px 22px 20px;
-      }
-
-      .small-image {
-        height: 190px;
-      }
-
-      .large-image {
-        height: 250px;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #ebe6e6; color: #111; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+    .page { max-width: 1300px; margin: 0 auto; padding: 28px 32px 48px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 46px; }
+    .logo { font-family: "Marcellus SC", serif; font-size: 3.4rem; line-height: 1; color: #0f4d4f; letter-spacing: 0.02em; text-decoration: none; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; position: relative; }
+    .top-btn { text-decoration: none; color: #17353b; background: #f3eeee; border: 1px solid rgba(16, 41, 52, 0.18); border-radius: 12px; padding: 9px 14px; font-size: 0.92rem; font-weight: 600; letter-spacing: 0.01em; cursor: pointer; display: inline-flex; align-items: center; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease; }
+    .top-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 18px rgba(0, 0, 0, 0.08); background: #ffffff; }
+    .notification-panel { position: absolute; top: 48px; right: 0; min-width: 230px; background: #f7f3f3; border: 1px solid rgba(16, 41, 52, 0.16); border-radius: 12px; box-shadow: 0 14px 26px rgba(0, 0, 0, 0.12); padding: 12px 14px; color: #4f4a4a; font-size: 0.92rem; font-weight: 500; display: none; z-index: 20; }
+    .notification-panel.show { display: block; }
+    .intro { font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 500; line-height: 1.35; max-width: 1000px; margin: 0 0 34px 34px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    .left-column { display: grid; gap: 32px; }
+    .card { background: #dfd8d8; border-radius: 22px; overflow: hidden; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+    .card-text { padding: 30px 34px 28px; }
+    .card h2 { font-size: clamp(1.9rem, 2vw, 2.5rem); line-height: 1.1; margin-bottom: 14px; font-weight: 700; color: #111; }
+    .card p { font-size: 1rem; line-height: 1.45; color: #666; max-width: 90%; }
+    .image-area { width: 100%; }
+    .small-image { height: 250px; }
+    .large-image { height: 600px; }
+    .gradient-one { background: radial-gradient(circle at 18% 72%, rgba(255, 93, 74, 0.95), transparent 24%), radial-gradient(circle at 34% 38%, rgba(214, 143, 170, 0.65), transparent 25%), radial-gradient(circle at 70% 55%, rgba(185, 214, 217, 0.8), transparent 28%), radial-gradient(circle at 88% 45%, rgba(232, 220, 200, 0.65), transparent 24%), linear-gradient(90deg, #9aa4da 0%, #c8a2b1 25%, #b6c7cf 60%, #d7d1c3 100%); filter: saturate(1.05); }
+    .gradient-two { background: radial-gradient(circle at 20% 30%, rgba(65, 52, 135, 0.7), transparent 28%), radial-gradient(circle at 52% 72%, rgba(220, 96, 168, 0.6), transparent 24%), radial-gradient(circle at 82% 22%, rgba(42, 49, 118, 0.75), transparent 24%), linear-gradient(120deg, #4e438c 0%, #7e5ba8 38%, #d16ca8 68%, #6a5bb4 100%); position: relative; }
+    .gradient-two::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 2px, transparent 4px); mix-blend-mode: soft-light; opacity: 0.45; }
+    .gradient-three { background: radial-gradient(circle at 14% 20%, rgba(233, 207, 196, 0.9), transparent 18%), radial-gradient(circle at 52% 20%, rgba(215, 210, 243, 0.92), transparent 22%), radial-gradient(circle at 88% 16%, rgba(11, 74, 208, 0.95), transparent 24%), radial-gradient(circle at 15% 88%, rgba(102, 124, 234, 0.65), transparent 20%), radial-gradient(circle at 70% 76%, rgba(98, 78, 163, 0.72), transparent 26%), linear-gradient(90deg, #ddc9c5 0%, #cfcee6 33%, #0f43c8 74%, #5f4f97 100%); filter: saturate(1.05); }
+    .card-link { text-decoration: none; color: inherit; display: block; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } .large-image { height: 320px; } .intro { margin-left: 0; } }
+    @media (max-width: 640px) { .page { padding: 22px 18px 36px; } .logo { font-size: 2.6rem; } .card-text { padding: 22px 22px 20px; } .small-image { height: 190px; } .large-image { height: 250px; } }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-<<<<<<< HEAD:source_code/src/views/public/patient-main.html
-      <a class="logo" href="/main">MedBridge</a>
+      <a class="logo" href="/patient-main">MedBridge</a>
       <nav class="topbar-actions">
-        <a class="top-btn" href="/main">Home</a>
+        <a class="top-btn" href="/patient-main">Home</a>
         <button type="button" class="top-btn" id="notifications-btn">Notifications</button>
         <div class="notification-panel" id="notification-panel">No notifications currently.</div>
-=======
-      <a href="/" class="logo">MedBridge</a>
-      <nav>
-        <a href="/login" class="card-link">Log out</a>
->>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
       </nav>
     </header>
 
     <section>
-      <p class="intro">
-        At MedBridge, we help care teams streamline clinical workflows and respond to patients faster.
-      </p>
+      <p class="intro">At MedBridge, we help patients find care quickly and stay connected through every step of treatment.</p>
     </section>
 
     <section class="grid">
       <div class="left-column">
-<<<<<<< HEAD:source_code/src/views/public/patient-main.html
-        <a href="/physician-dashboard" class="card-link">
-=======
-        <a href="/main" class="card-link">
->>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
+        <a href="/patient-talk-provider" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Manage Appointment Schedule</h2>
-              <p>Review today's visits, update time slots, and keep your clinic schedule running on time.</p>
+              <h2>Talk to Your Primary Care Provider</h2>
+              <p>Send non-urgent questions, request appointments, and follow up without long wait times.</p>
             </div>
             <div class="image-area small-image gradient-one"></div>
           </article>
         </a>
 
-<<<<<<< HEAD:source_code/src/views/public/patient-main.html
-        <a href="/messaging" class="card-link">
-=======
-        <a href="/main" class="card-link">
->>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
+        <a href="/patient-find-referral" class="card-link">
           <article class="card">
             <div class="card-text">
-              <h2>Coordinate Patient Follow-Ups</h2>
-              <p>Send care instructions, answer patient questions, and track post-visit follow-up communication.</p>
+              <h2>Find a Specialist</h2>
+              <p>Search for specialists by condition, location, or service and move your referral forward.</p>
             </div>
             <div class="image-area small-image gradient-two"></div>
           </article>
         </a>
       </div>
 
-      <a href="/main" class="card-link">
+      <a href="/patient-profile-overview" class="card-link">
         <article class="card">
           <div class="card-text">
             <h2>View Your Profile</h2>
-            <p>Check your referral history, saved doctors, account information, and everything connected to your patient journey.</p>
+            <p>Check your history, account details, and care activity all in one place.</p>
           </div>
           <div class="image-area large-image gradient-three"></div>
         </article>

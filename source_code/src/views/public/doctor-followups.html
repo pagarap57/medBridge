@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doctor Follow-Ups | MedBridge</title>
+  <title>Send Referrals | MedBridge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
@@ -15,60 +15,67 @@
     .logo { font-family: "Marcellus SC", serif; font-size: 3rem; color: #0f4d4f; text-decoration: none; }
     .topbar-actions { display: flex; gap: 12px; align-items: center; }
     .top-btn { text-decoration: none; color: #17353b; background: #f3eeee; border: 1px solid rgba(16,41,52,0.18); border-radius: 12px; padding: 9px 14px; font-size: 0.92rem; font-weight: 600; }
-    .panel { background: #dfd8d8; border-radius: 22px; padding: 28px; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; }
+    .panel { background: #dfd8d8; border-radius: 22px; padding: 26px; box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset; }
+    .panel + .panel { margin-top: 16px; }
     h1 { font-family: "Cormorant Garamond", serif; font-size: clamp(2rem, 3.8vw, 2.8rem); margin-bottom: 8px; }
-    .sub { color: #5f5a5a; margin-bottom: 20px; line-height: 1.5; }
-    .task-list { list-style: none; display: grid; gap: 12px; }
-    .task-item { background: rgba(255,255,255,0.5); border-radius: 14px; padding: 14px; display: grid; grid-template-columns: 120px 1fr 180px; gap: 14px; align-items: center; }
-    .due { font-weight: 700; color: #17353b; }
-    .title { font-weight: 600; color: #171616; }
-    .desc { color: #5f5a5a; font-size: 0.93rem; margin-top: 2px; }
-    .priority { justify-self: end; font-size: 0.8rem; font-weight: 700; color: #584320; background: rgba(176,140,76,0.18); padding: 8px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
-    .actions { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
-    .action-btn { text-decoration: none; border-radius: 999px; padding: 11px 18px; font-weight: 700; font-size: 0.92rem; }
-    .action-primary { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
-    .action-secondary { color: #17353b; background: rgba(255,255,255,0.55); border: 1px solid rgba(16,41,52,0.18); }
+    h2 { font-family: "Cormorant Garamond", serif; font-size: clamp(1.8rem, 3.2vw, 2.3rem); margin-bottom: 10px; }
+    .sub { color: #5f5a5a; margin-bottom: 14px; line-height: 1.55; }
+    .search-input { width: 100%; border: none; border-radius: 12px; padding: 13px 14px; font-size: 0.95rem; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); color: #1b1f33; margin-bottom: 14px; }
+    .grid { display: grid; gap: 10px; }
+    .card { background: rgba(255,255,255,0.54); border-radius: 14px; padding: 14px; display: grid; grid-template-columns: 1fr 220px; gap: 14px; align-items: center; }
+    .name { font-weight: 700; color: #171616; margin-bottom: 3px; }
+    .meta { color: #5f5a5a; font-size: 0.93rem; line-height: 1.4; }
+    .actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+    .btn { text-decoration: none; border-radius: 999px; padding: 8px 12px; font-size: 0.8rem; font-weight: 700; }
+    .btn-primary { color: #0d1d43; background: linear-gradient(90deg, rgba(243,240,249,0.96), rgba(239,237,225,0.92)); }
+    .btn-secondary { color: #17353b; background: rgba(255,255,255,0.7); border: 1px solid rgba(16,41,52,0.16); }
     @media (max-width: 760px) {
       .page { padding: 20px 16px 34px; }
       .logo { font-size: 2.4rem; }
-      .task-item { grid-template-columns: 1fr; }
-      .priority { justify-self: start; }
+      .card { grid-template-columns: 1fr; }
+      .actions { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <header class="topbar">
-      <a class="logo" href="/maindoc">MedBridge</a>
+      <a class="logo" href="/doctor-main">MedBridge</a>
       <nav class="topbar-actions">
-        <a class="top-btn" href="/maindoc">Home</a>
-        <a class="top-btn" href="/messaging">Messaging</a>
+        <a class="top-btn" href="/doctor-main">Home</a>
+        <a class="top-btn" href="/doctor-profile">My Profile</a>
       </nav>
     </header>
 
     <section class="panel">
-      <h1>Coordinate Patient Follow-Ups</h1>
-      <p class="sub">Track pending outreach, post-visit tasks, and unanswered questions so no follow-up slips through.</p>
-      <ul class="task-list">
-        <li class="task-item">
-          <div class="due">Due Today</div>
-          <div><div class="title">Medication tolerance check</div><div class="desc">Call patient after new antihypertensive dosage adjustment.</div></div>
-          <div class="priority">High</div>
-        </li>
-        <li class="task-item">
-          <div class="due">Due Tomorrow</div>
-          <div><div class="title">Lab results clarification</div><div class="desc">Send notes for abnormal thyroid panel and next steps.</div></div>
-          <div class="priority">Medium</div>
-        </li>
-        <li class="task-item">
-          <div class="due">This Week</div>
-          <div><div class="title">Post-discharge check-in</div><div class="desc">Confirm symptom progression and adherence to discharge plan.</div></div>
-          <div class="priority">Medium</div>
-        </li>
-      </ul>
-      <div class="actions">
-        <a href="/messaging" class="action-btn action-primary">Open Messaging</a>
-        <a href="/maindoc" class="action-btn action-secondary">Back to Doctor Home</a>
+      <h1>Send Referrals</h1>
+      <p class="sub">Search for specialists and send referrals with key context attached.</p>
+      <input class="search-input" type="search" placeholder="Search specialists: cardiology, endocrinology, Denver, pediatric ENT..." aria-label="Search specialists" />
+      <div class="grid">
+        <article class="card">
+          <div><div class="name">Cardiology - Dr. Priya Nair</div><div class="meta">Interventional cardiology | Availability: 3 days | St. Anthony Heart Center</div></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Referral</a></div>
+        </article>
+        <article class="card">
+          <div><div class="name">Endocrinology - Dr. Marcus Lee</div><div class="meta">Diabetes and thyroid care | Availability: 5 days | Westside Specialty Clinic</div></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Referral</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Contact Other Care Team Members</h2>
+      <p class="sub">Search and contact nurses, case managers, and partner clinicians. Buttons are placeholders for profile pages.</p>
+      <input class="search-input" type="search" placeholder="Search care team: case manager, RN, pharmacist, nephrology..." aria-label="Search care team" />
+      <div class="grid">
+        <article class="card">
+          <div><div class="name">Jamie Collins, RN - Care Manager</div><div class="meta">Transitions of care | Available today until 5:00 PM</div></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Message</a></div>
+        </article>
+        <article class="card">
+          <div><div class="name">Taylor Brooks, PharmD - Clinical Pharmacy</div><div class="meta">Medication reconciliation and interactions support</div></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><a href="/doctor-profile" class="btn btn-primary">Send Message</a></div>
+        </article>
       </div>
     </section>
   </main>
