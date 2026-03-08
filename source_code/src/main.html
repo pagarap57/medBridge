@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedBridge Main </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ebe6e6;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 28px 32px 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 46px;
+    }
+
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.4rem;
+      line-height: 1;
+      color: #0f4d4f;
+      letter-spacing: 0.02em;
+    }
+
+    .socials {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #8a8585;
+    }
+
+    .socials a {
+      color: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .socials a:hover {
+      transform: translateY(-2px);
+      opacity: 0.8;
+    }
+
+    .socials svg {
+      width: 31px;
+      height: 31px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .intro {
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: 500;
+      line-height: 1.35;
+      max-width: 1000px;
+      margin: 0 0 34px 34px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .left-column {
+      display: grid;
+      gap: 32px;
+    }
+
+    .card {
+      background: #dfd8d8;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    }
+
+    .card-text {
+      padding: 30px 34px 28px;
+    }
+
+    .card h2 {
+      font-size: clamp(1.9rem, 2vw, 2.5rem);
+      line-height: 1.1;
+      margin-bottom: 14px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .card p {
+      font-size: 1rem;
+      line-height: 1.45;
+      color: #666;
+      max-width: 90%;
+    }
+
+    .image-area {
+      width: 100%;
+    }
+
+    .small-image {
+      height: 250px;
+    }
+
+    .large-image {
+      height: 600px;
+    }
+
+    .gradient-one {
+      background:
+        radial-gradient(circle at 18% 72%, rgba(255, 93, 74, 0.95), transparent 24%),
+        radial-gradient(circle at 34% 38%, rgba(214, 143, 170, 0.65), transparent 25%),
+        radial-gradient(circle at 70% 55%, rgba(185, 214, 217, 0.8), transparent 28%),
+        radial-gradient(circle at 88% 45%, rgba(232, 220, 200, 0.65), transparent 24%),
+        linear-gradient(90deg, #9aa4da 0%, #c8a2b1 25%, #b6c7cf 60%, #d7d1c3 100%);
+      filter: saturate(1.05);
+    }
+
+    .gradient-two {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(65, 52, 135, 0.7), transparent 28%),
+        radial-gradient(circle at 52% 72%, rgba(220, 96, 168, 0.6), transparent 24%),
+        radial-gradient(circle at 82% 22%, rgba(42, 49, 118, 0.75), transparent 24%),
+        linear-gradient(120deg, #4e438c 0%, #7e5ba8 38%, #d16ca8 68%, #6a5bb4 100%);
+      position: relative;
+    }
+
+    .gradient-two::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255,255,255,0.04) 0px,
+        rgba(255,255,255,0.04) 1px,
+        transparent 2px,
+        transparent 4px
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0.45;
+    }
+
+    .gradient-three {
+      background:
+        radial-gradient(circle at 14% 20%, rgba(233, 207, 196, 0.9), transparent 18%),
+        radial-gradient(circle at 52% 20%, rgba(215, 210, 243, 0.92), transparent 22%),
+        radial-gradient(circle at 88% 16%, rgba(11, 74, 208, 0.95), transparent 24%),
+        radial-gradient(circle at 15% 88%, rgba(102, 124, 234, 0.65), transparent 20%),
+        radial-gradient(circle at 70% 76%, rgba(98, 78, 163, 0.72), transparent 26%),
+        linear-gradient(90deg, #ddc9c5 0%, #cfcee6 33%, #0f43c8 74%, #5f4f97 100%);
+      filter: saturate(1.05);
+    }
+
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .large-image {
+        height: 320px;
+      }
+
+      .intro {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 22px 18px 36px;
+      }
+
+      .logo {
+        font-size: 2.6rem;
+      }
+
+      .socials {
+        gap: 12px;
+      }
+
+      .socials svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .card-text {
+        padding: 22px 22px 20px;
+      }
+
+      .small-image {
+        height: 190px;
+      }
+
+      .large-image {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="logo">MedBridge</div>
+
+      <nav class="socials" aria-label="Social links">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4"></circle>
+            <circle cx="17.3" cy="6.7" r="1"></circle>
+          </svg>
+        </a>
+
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <path d="M8 10v7"></path>
+            <path d="M8 7h.01"></path>
+            <path d="M12 17v-4.2c0-1.4.8-2.3 2-2.3 1.4 0 2 .9 2 2.6V17"></path>
+            <path d="M12 10v1"></path>
+          </svg>
+        </a>
+
+        <a href="#" aria-label="X">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 4l16 16"></path>
+            <path d="M20 4L4 20"></path>
+          </svg>
+        </a>
+      </nav>
+    </header>
+
+    <section>
+      <p class="intro">
+        At MedBridge, we aim to reduce the time it takes for our patients to access care.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="left-column">
+        <a href="#" class="card-link">
+          <article class="card">
+            <div class="card-text">
+              <h2>Talk to your primary care provider</h2>
+              <p>Are you trying to book an appointment with your primary care? Send them a message and get connected faster.</p>
+            </div>
+            <div class="image-area small-image gradient-one"></div>
+          </article>
+        </a>
+
+        <a href="#" class="card-link">
+          <article class="card">
+            <div class="card-text">
+              <h2>Find a referral</h2>
+              <p>Search for specialist recommendations, browse suggested providers, and follow the next step in your care path.</p>
+            </div>
+            <div class="image-area small-image gradient-two"></div>
+          </article>
+        </a>
+      </div>
+
+      <a href="#" class="card-link">
+        <article class="card">
+          <div class="card-text">
+            <h2>View Your Profile</h2>
+            <p>Check your referral history, saved doctors, account information, and everything connected to your patient journey.</p>
+          </div>
+          <div class="image-area large-image gradient-three"></div>
+        </article>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

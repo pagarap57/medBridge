@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedBridge Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(53, 130, 101, 0.35), transparent 30%),
+        radial-gradient(circle at 80% 12%, rgba(32, 100, 80, 0.4), transparent 28%),
+        radial-gradient(circle at 92% 20%, rgba(150, 81, 49, 0.22), transparent 22%),
+        radial-gradient(circle at 15% 90%, rgba(138, 146, 196, 0.28), transparent 26%),
+        linear-gradient(180deg, #23272d 0%, #31445d 55%, #425d8d 100%);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen {
+      position: relative;
+      width: min(96vw, 1400px);
+      height: min(96vh, 1100px);
+      border: 14px solid rgba(40, 39, 44, 0.85);
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)),
+        linear-gradient(180deg, #26323a 0%, #314661 52%, #46628f 100%);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(67, 121, 97, 0.18), transparent 35%),
+        radial-gradient(circle at 35% 70%, rgba(83, 91, 173, 0.10), transparent 35%),
+        radial-gradient(circle at 88% 50%, rgba(130, 98, 175, 0.08), transparent 24%);
+      filter: blur(14px);
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      filter: blur(2px);
+      opacity: 0.82;
+    }
+
+    .blob1 {
+      width: 720px;
+      height: 720px;
+      top: -170px;
+      left: 180px;
+      background: rgba(5, 71, 49, 0.78);
+      border-radius: 45% 55% 40% 60% / 50% 32% 68% 50%;
+      transform: rotate(-18deg);
+    }
+
+    .blob2 {
+      width: 620px;
+      height: 620px;
+      top: 110px;
+      left: 180px;
+      background: rgba(35, 66, 96, 0.62);
+      border-radius: 56% 44% 63% 37% / 42% 55% 45% 58%;
+      transform: rotate(12deg);
+    }
+
+    .blob3 {
+      width: 720px;
+      height: 520px;
+      right: -130px;
+      top: 420px;
+      background: rgba(50, 72, 118, 0.75);
+      border-radius: 58% 42% 34% 66% / 44% 53% 47% 56%;
+      transform: rotate(-18deg);
+    }
+
+    .blob4 {
+      width: 420px;
+      height: 420px;
+      left: -140px;
+      top: 130px;
+      background: rgba(170, 168, 195, 0.18);
+      border-radius: 56% 44% 60% 40% / 44% 57% 43% 56%;
+      transform: rotate(-12deg);
+    }
+
+    .blob5 {
+      width: 400px;
+      height: 400px;
+      left: -120px;
+      bottom: -120px;
+      background: rgba(192, 195, 224, 0.22);
+      border-radius: 58% 42% 50% 50% / 41% 58% 42% 59%;
+      transform: rotate(10deg);
+    }
+
+    .blob6 {
+      width: 360px;
+      height: 260px;
+      right: -60px;
+      top: 210px;
+      background: rgba(115, 95, 122, 0.18);
+      border-radius: 60% 40% 60% 40% / 48% 62% 38% 52%;
+      transform: rotate(18deg);
+    }
+
+    .blob7 {
+      width: 260px;
+      height: 360px;
+      right: -70px;
+      bottom: 110px;
+      background: rgba(134, 143, 223, 0.18);
+      border-radius: 42% 58% 39% 61% / 50% 38% 62% 50%;
+      transform: rotate(-24deg);
+    }
+
+    .content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4rem, 8vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: 0.04em;
+      color: #f3f2f0;
+      text-shadow: 0 2px 2px rgba(0,0,0,0.25);
+      margin-bottom: 34px;
+      font-weight: 500;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      cursor: pointer;
+      color: #0c1f4b;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      background: linear-gradient(90deg, rgba(241,239,249,0.92), rgba(255,246,228,0.88));
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.25),
+        0 10px 24px rgba(0,0,0,0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.25),
+        0 16px 28px rgba(0,0,0,0.16);
+    }
+
+    .primary-btn {
+      width: min(70vw, 500px);
+      min-height: 110px;
+      border-radius: 34px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      margin-bottom: 82px;
+    }
+
+    .secondary-text {
+      color: rgba(255,255,255,0.92);
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      font-weight: 400;
+      margin-bottom: 22px;
+    }
+
+    .secondary-btn {
+      width: min(44vw, 320px);
+      min-height: 74px;
+      border-radius: 28px;
+      font-size: clamp(1.5rem, 2.7vw, 2.3rem);
+    }
+
+    .arrow {
+      margin-left: 14px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .screen {
+        border-width: 10px;
+      }
+
+      .blob1 {
+        width: 480px;
+        height: 480px;
+        left: 60px;
+        top: -80px;
+      }
+
+      .blob2 {
+        width: 420px;
+        height: 420px;
+        left: 70px;
+        top: 180px;
+      }
+
+      .blob3 {
+        width: 480px;
+        height: 360px;
+        right: -120px;
+        top: 500px;
+      }
+
+      .primary-btn {
+        min-height: 90px;
+        border-radius: 28px;
+        margin-bottom: 60px;
+      }
+
+      .secondary-btn {
+        min-height: 64px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .screen {
+        width: 100vw;
+        height: 100vh;
+        border-width: 0;
+      }
+
+      .brand {
+        margin-bottom: 24px;
+      }
+
+      .primary-btn {
+        width: 88%;
+        min-height: 84px;
+        font-size: 2rem;
+        margin-bottom: 50px;
+      }
+
+      .secondary-text {
+        font-size: 1.8rem;
+      }
+
+      .secondary-btn {
+        width: 72%;
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+    <div class="blob blob5"></div>
+    <div class="blob blob6"></div>
+    <div class="blob blob7"></div>
+
+    <div class="content">
+      <div class="panel">
+        <h1 class="brand">MedBridge</h1>
+
+        <button class="primary-btn">
+          LOGIN! <span class="arrow">→</span>
+        </button>
+
+        <p class="secondary-text">New to MedBridge?</p>
+
+        <button class="secondary-btn">
+          SIGN UP! <span class="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
