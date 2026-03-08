@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedBridge Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(97, 255, 188, 0.12), transparent 35%),
+        radial-gradient(circle at 80% 15%, rgba(255, 161, 94, 0.10), transparent 30%),
+        radial-gradient(circle at 75% 75%, rgba(141, 123, 255, 0.12), transparent 35%),
+        linear-gradient(180deg, #0e1b20 0%, #21384f 55%, #2c3960 100%);
+      position: relative;
+    }
+
+    .blob {
+      position: absolute;
+      filter: blur(4px);
+      opacity: 0.28;
+      z-index: 0;
+    }
+
+    .blob1 {
+      width: 420px;
+      height: 420px;
+      top: -80px;
+      left: -80px;
+      background: rgba(205, 212, 255, 0.25);
+      border-radius: 48% 52% 42% 58% / 56% 34% 66% 44%;
+      transform: rotate(20deg);
+    }
+
+    .blob2 {
+      width: 520px;
+      height: 520px;
+      top: 40px;
+      right: -140px;
+      background: rgba(13, 79, 59, 0.45);
+      border-radius: 58% 42% 63% 37% / 38% 59% 41% 62%;
+    }
+
+    .blob3 {
+      width: 650px;
+      height: 650px;
+      bottom: -220px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(91, 130, 189, 0.20);
+      border-radius: 41% 59% 56% 44% / 52% 39% 61% 48%;
+    }
+
+    .blob4 {
+      width: 360px;
+      height: 260px;
+      bottom: -20px;
+      left: -90px;
+      background: rgba(225, 232, 255, 0.18);
+      border-radius: 53% 47% 70% 30% / 40% 47% 53% 60%;
+      transform: rotate(12deg);
+    }
+
+    .blob5 {
+      width: 260px;
+      height: 220px;
+      bottom: 120px;
+      right: -40px;
+      background: rgba(188, 157, 255, 0.16);
+      border-radius: 59% 41% 36% 64% / 61% 33% 67% 39%;
+      transform: rotate(-15deg);
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 470px;
+      text-align: center;
+      padding: 30px 28px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 4.3rem;
+      letter-spacing: 2px;
+      line-height: 0.95;
+      margin-bottom: 4px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.76);
+      margin-bottom: 28px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .input-group input {
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 22px;
+      padding: 16px 18px;
+      font-size: 1rem;
+      background: linear-gradient(90deg, rgba(242, 240, 248, 0.92), rgba(247, 246, 238, 0.88));
+      color: #112244;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .input-group input::placeholder {
+      color: rgba(17, 34, 68, 0.55);
+    }
+
+    .login-btn {
+      margin-top: 8px;
+      border: none;
+      cursor: pointer;
+      border-radius: 26px;
+      padding: 18px 22px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #0d1d43;
+      background: linear-gradient(90deg, rgba(243, 240, 249, 0.96), rgba(239, 237, 225, 0.92));
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    .small-text {
+      margin-top: 24px;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .switch-btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #112244;
+      background: linear-gradient(90deg, rgba(243, 240, 249, 0.95), rgba(239, 237, 225, 0.9));
+      transition: transform 0.2s ease;
+    }
+
+    .switch-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      .brand {
+        font-size: 3.1rem;
+      }
+
+      .card {
+        padding: 24px 18px;
+      }
+
+      .login-btn {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+  <div class="blob blob5"></div>
+
+  <div class="wrapper">
+    <div class="card">
+      <h1 class="brand">MedBridge</h1>
+      <p class="subtitle">Welcome back</p>
+
+      <form>
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" />
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" />
+        </div>
+
+        <button type="submit" class="login-btn">LOGIN! →</button>
+      </form>
+
+      <p class="small-text">New to MedBridge?</p>
+      <a href="signup.html" class="switch-btn">SIGN UP! →</a>
+    </div>
+  </div>
+</body>
+</html>
