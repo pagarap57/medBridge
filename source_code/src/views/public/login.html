@@ -23,7 +23,8 @@
       min-height: 100vh;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: white;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       background:
         radial-gradient(circle at 20% 20%, rgba(42, 136, 97, 0.12), transparent 35%),
         radial-gradient(circle at 80% 15%, rgba(255, 161, 94, 0.10), transparent 30%),
@@ -229,7 +230,7 @@
       <h1 class="brand">MedBridge</h1>
       <p class="subtitle">Welcome back!</p>
 
-      <form action="/login" method="POST">
+      <form action="/main" method="GET">
         <div class="input-group">
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="Enter your email" />
@@ -245,6 +246,7 @@
 
       <p class="small-text">New to MedBridge?</p>
       <a href="/signup" class="switch-btn">SIGN UP! →</a>
+      <p class="small-text" style="margin-top: 10px;"><a href="/">Back to home</a></p>
     </div>
   </div>
 </body>
