@@ -210,21 +210,7 @@ height:200px;
 <div class="sidebar">
 
 <h3>Messages</h3>
-
-<div class="conversation active">
-<div class="conversation-name">Mia Johnson</div>
-<div class="conversation-preview">Can we review my blood pressure plan?</div>
-</div>
-
-<div class="conversation">
-<div class="conversation-name">Noah Patel</div>
-<div class="conversation-preview">I uploaded my glucose log.</div>
-</div>
-
-<div class="conversation">
-<div class="conversation-name">Elena Ruiz</div>
-<div class="conversation-preview">My follow-up pain is improving.</div>
-</div>
+<div id="conversationList"></div>
 
 </div>
 
@@ -232,29 +218,8 @@ height:200px;
 
 <div class="chat-window">
 
-<div class="chat-header">
-Mia Johnson — Client
-</div>
-
-<div class="messages">
-
-<div class="message received">
-Hi Dr. Patel, I reviewed the referral options.
-</div>
-
-<div class="message received">
-Can you send one to a clinic close to Denver?
-</div>
-
-<div class="message sent">
-Yes, I can send that now and follow up today.
-</div>
-
-<div class="message received">
-Thank you, that works for me.
-</div>
-
-</div>
+<div class="chat-header" id="chatHeader"></div>
+<div class="messages"></div>
 
 <div class="message-input">
 <input type="text" placeholder="Type a message...">
@@ -274,6 +239,74 @@ const socket = io();
 const input = document.querySelector(".message-input input");
 const button = document.querySelector(".message-input button");
 const messages = document.querySelector(".messages");
+const conversationList = document.getElementById("conversationList");
+const chatHeader = document.getElementById("chatHeader");
+
+const DOCTOR_CONVERSATIONS = [
+  {
+    name: "Mia Johnson",
+    roleLabel: "Client",
+    preview: "Can we review my blood pressure plan?",
+    thread: [
+      { text: "Hi Dr. Patel, I reviewed the referral options.", received: true },
+      { text: "Can you send one to a clinic close to Denver?", received: true },
+      { text: "Yes, I can send that now and follow up today.", received: false },
+      { text: "Thank you, that works for me.", received: true }
+    ]
+  },
+  {
+    name: "Noah Patel",
+    roleLabel: "Client",
+    preview: "I uploaded my glucose log.",
+    thread: [
+      { text: "I uploaded my glucose log to the portal.", received: true },
+      { text: "Perfect, I will review it before our follow-up.", received: false }
+    ]
+  },
+  {
+    name: "Elena Ruiz",
+    roleLabel: "Client",
+    preview: "My follow-up pain is improving.",
+    thread: [
+      { text: "My follow-up pain is improving this week.", received: true },
+      { text: "Good progress. Keep the same care plan for now.", received: false }
+    ]
+  }
+];
+
+const PATIENT_CONVERSATIONS = [
+  {
+    name: "Dr. Aisha Khan",
+    roleLabel: "Doctor",
+    preview: "Your referral request was approved.",
+    thread: [
+      { text: "Your referral request was approved.", received: true },
+      { text: "Great, when should I call the specialist office?", received: false },
+      { text: "You can call this afternoon. I added details to your chart.", received: true }
+    ]
+  },
+  {
+    name: "Dr. Marcus Lee",
+    roleLabel: "Doctor",
+    preview: "Please continue your current meds.",
+    thread: [
+      { text: "Please continue your current meds until Friday.", received: true },
+      { text: "Got it, I will keep the same schedule.", received: false }
+    ]
+  },
+  {
+    name: "Dr. Priya Nair",
+    roleLabel: "Doctor",
+    preview: "Let me know if symptoms increase.",
+    thread: [
+      { text: "Let me know if symptoms increase before your visit.", received: true },
+      { text: "Will do, thank you for checking in.", received: false }
+    ]
+  }
+];
+
+let currentUser = null;
+let activeConversation = null;
 
 button.onclick = sendMessage;
 input.addEventListener("keypress", function(e){
@@ -287,9 +320,13 @@ function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
 
+  renderMessage(text, false);
+
+  const senderId = currentUser?.id || 1;
+  const recipientId = activeConversation?.recipientId || 2;
   const message = {
-    sender: 1,        // temporary demo user
-    recipient: 2,     // doctor
+    sender: senderId,
+    recipient: recipientId,
     text: text
   };
 
@@ -299,21 +336,79 @@ function sendMessage(){
 }
 
 socket.on("chat message", function(msg){
+  if(!currentUser) return;
+  if(msg.sender === currentUser.id) return;
+  renderMessage(msg.text, true);
+});
 
+function renderMessage(text, isReceived){
   const div = document.createElement("div");
-
-  if(msg.sender === 1){
-      div.classList.add("message","sent");
-  } else {
-      div.classList.add("message","received");
-  }
-
-  div.textContent = msg.text;
-
+  div.classList.add("message", isReceived ? "received" : "sent");
+  div.textContent = text;
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
+}
 
-});
+function renderThread(conversation){
+  messages.innerHTML = "";
+  chatHeader.textContent = `${conversation.name} \u2014 ${conversation.roleLabel}`;
+
+  conversation.thread.forEach((entry) => {
+    renderMessage(entry.text, entry.received);
+  });
+}
+
+function setActiveConversation(index, list){
+  activeConversation = list[index];
+
+  Array.from(conversationList.querySelectorAll(".conversation")).forEach((item, itemIndex) => {
+    item.classList.toggle("active", itemIndex === index);
+  });
+
+  renderThread(activeConversation);
+}
+
+function renderConversations(list){
+  conversationList.innerHTML = "";
+
+  list.forEach((conversation, index) => {
+    const card = document.createElement("div");
+    card.className = "conversation";
+    card.innerHTML = `
+      <div class="conversation-name">${conversation.name}</div>
+      <div class="conversation-preview">${conversation.preview}</div>
+    `;
+
+    card.addEventListener("click", () => {
+      setActiveConversation(index, list);
+    });
+
+    conversationList.appendChild(card);
+  });
+
+  setActiveConversation(0, list);
+}
+
+async function initMessaging(){
+  try{
+    const response = await fetch("/api/me");
+    if(!response.ok){
+      throw new Error("Failed to fetch user");
+    }
+
+    const data = await response.json();
+    currentUser = data.user;
+
+    const list = currentUser.role === "doctor" ? DOCTOR_CONVERSATIONS : PATIENT_CONVERSATIONS;
+    renderConversations(list);
+  } catch (err){
+    console.error(err);
+    currentUser = { id: 1, role: "doctor" };
+    renderConversations(DOCTOR_CONVERSATIONS);
+  }
+}
+
+initMessaging();
 </script>
 </body>
 </html>

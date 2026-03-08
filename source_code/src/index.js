@@ -189,6 +189,9 @@ app.get('/find-referral', auth, (req, res) => {
 });
 
 app.get('/profile-overview', auth, (req, res) => {
+  if (isDoctor(req)) {
+    return res.redirect('/doctor-profile');
+  }
   res.redirect('/patient-profile-overview');
 });
 
@@ -201,6 +204,9 @@ app.get('/patient-find-referral', auth, (req, res) => {
 });
 
 app.get('/patient-profile-overview', auth, (req, res) => {
+  if (isDoctor(req)) {
+    return res.redirect('/doctor-profile');
+  }
   sendPublic(res, 'patient-profile-overview.html');
 });
 
@@ -218,6 +224,19 @@ app.get('/doctor-profile', auth, doctorOnly, (req, res) => {
 
 app.get('/messaging', auth, (req, res) => {
   sendPublic(res, 'messaging.html');
+});
+
+app.get('/api/me', auth, (req, res) => {
+  const user = req.session.user;
+  return res.json({
+    user: {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role
+    }
+  });
 });
 
 app.get('/api/referrals', auth, async (req, res) => {
