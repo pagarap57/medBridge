@@ -13,6 +13,7 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'views/public')));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(
   session({
@@ -90,15 +91,24 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.redirect('/signup?error=All+fields+are+required');
+    }
+
     const role = req.body.role === 'doctor' ? 'doctor' : 'patient';
+
+    const existing = await db.oneOrNone('SELECT id FROM users WHERE email=$1', [email]);
+    if (existing) {
+      return res.redirect('/signup?error=Email+already+registered');
+    }
+
     const hash = await bcrypt.hash(password, 10);
 
     const user = await db.one(
-      `
-      INSERT INTO users(first_name, last_name, email, password, role)
-      VALUES($1, $2, $3, $4, $5)
-      RETURNING id, first_name, last_name, email, role
-      `,
+      `INSERT INTO users(first_name, last_name, email, password, role)
+       VALUES($1, $2, $3, $4, $5)
+       RETURNING id, first_name, last_name, email, role`,
       [firstName, lastName, email, hash, role]
     );
 
@@ -112,25 +122,30 @@ app.post('/signup', async (req, res) => {
 >>>>>>> main
   } catch (err) {
     console.error(err);
-    res.status(400).send('Signup failed');
+    res.redirect('/signup?error=Signup+failed.+Please+try+again');
   }
 });
 
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.redirect('/login?error=Email+and+password+are+required');
+    }
+
     const user = await db.oneOrNone(
       'SELECT id, first_name, last_name, email, password, role FROM users WHERE email=$1',
       [email]
     );
 
     if (!user) {
-      return res.status(401).send('User not found');
+      return res.redirect('/login?error=No+account+found+with+that+email');
     }
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
-      return res.status(401).send('Invalid password');
+      return res.redirect('/login?error=Invalid+password');
     }
 
     req.session.user = {
@@ -150,7 +165,7 @@ app.post('/login', async (req, res) => {
 >>>>>>> main
   } catch (err) {
     console.error(err);
-    res.status(500).send('Login error');
+    res.redirect('/login?error=Something+went+wrong.+Please+try+again');
   }
 });
 
@@ -269,6 +284,55 @@ app.get('/messaging', auth, (req, res) => {
   sendPublic(res, 'messaging.html');
 });
 
+app.get('/api/referrals', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    if (isDoctor(req)) {
+      const referrals = await db.any(
+        `SELECT r.id,
+                r.specialist_name,
+                r.specialist_type,
+                r.location,
+                r.status,
+                r.notes,
+                r.created_at,
+                p.first_name AS patient_first_name,
+                p.last_name  AS patient_last_name
+         FROM referrals r
+         JOIN users p ON p.id = r.patient_id
+         WHERE r.physician_id = $1
+         ORDER BY r.created_at DESC`,
+        [userId]
+      );
+
+      return res.json({ role: 'doctor', referrals });
+    }
+
+    const referrals = await db.any(
+      `SELECT r.id,
+              r.specialist_name,
+              r.specialist_type,
+              r.location,
+              r.status,
+              r.notes,
+              r.created_at,
+              d.first_name AS doctor_first_name,
+              d.last_name  AS doctor_last_name
+       FROM referrals r
+       JOIN users d ON d.id = r.physician_id
+       WHERE r.patient_id = $1
+       ORDER BY r.created_at DESC`,
+      [userId]
+    );
+
+    return res.json({ role: 'patient', referrals });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load referrals' });
+  }
+});
+
 app.get('/patient-dashboard', auth, (req, res) => {
   res.redirect('/patient-find-referral');
 });
@@ -289,8 +353,29 @@ app.get('/logout', (req, res) => {
   });
 });
 
-io.on('connection', (socket) => {
-  console.log('User connected', socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("chat message", async (msg) => {
+
+    try {
+
+      await db.none(
+        "INSERT INTO messages(sender_id, recipient_id, content) VALUES($1,$2,$3)",
+        [msg.sender, msg.recipient, msg.text]
+      );
+
+    } catch (err) {
+      console.error("DB insert failed:", err);
+    }
+
+    io.emit("chat message", msg);
+
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
 });
 
 const PORT = Number(process.env.PORT || 3000);

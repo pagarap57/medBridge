@@ -266,6 +266,54 @@ Yes, you can book directly through the referral section.
 </div>
 
 </main>
+<script src="/socket.io/socket.io.js"></script>
 
+<script>
+const socket = io();
+
+const input = document.querySelector(".message-input input");
+const button = document.querySelector(".message-input button");
+const messages = document.querySelector(".messages");
+
+button.onclick = sendMessage;
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    sendMessage();
+  }
+});
+
+function sendMessage(){
+
+  const text = input.value.trim();
+  if(!text) return;
+
+  const message = {
+    sender: 1,        // temporary demo user
+    recipient: 2,     // doctor
+    text: text
+  };
+
+  socket.emit("chat message", message);
+
+  input.value="";
+}
+
+socket.on("chat message", function(msg){
+
+  const div = document.createElement("div");
+
+  if(msg.sender === 1){
+      div.classList.add("message","sent");
+  } else {
+      div.classList.add("message","received");
+  }
+
+  div.textContent = msg.text;
+
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+
+});
+</script>
 </body>
 </html>

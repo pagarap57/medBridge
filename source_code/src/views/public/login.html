@@ -230,19 +230,34 @@
       <h1 class="brand">MedBridge</h1>
       <p class="subtitle">Welcome back!</p>
 
-      <form action="/login" method="POST">
+      <div id="error-banner" style="display:none; background:rgba(255,80,80,0.18); border:1px solid rgba(255,80,80,0.5); border-radius:14px; padding:12px 18px; margin-bottom:16px; font-size:0.95rem; color:#ffb3b3; text-align:left;"></div>
+
+      <form action="/login" method="POST" id="login-form">
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email" />
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
         </div>
 
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" />
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
         </div>
 
         <button type="submit" class="login-btn">LOGIN! →</button>
       </form>
+
+      <script>
+        (function() {
+          var params = new URLSearchParams(window.location.search);
+          var err = params.get('error');
+          if (err) {
+            var banner = document.getElementById('error-banner');
+            banner.textContent = decodeURIComponent(err);
+            banner.style.display = 'block';
+            history.replaceState(null, '', window.location.pathname);
+          }
+        })();
+      </script>
 
       <p class="small-text">New to MedBridge?</p>
       <a href="/signup" class="switch-btn">SIGN UP! →</a>
