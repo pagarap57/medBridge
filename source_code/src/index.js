@@ -90,16 +90,8 @@ app.get('/patient-profile-overview',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/patient-profile-overview.html'));
 });
 
-app.get('/doctor-schedule',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/doctor-schedule.html'));
-});
-
-app.get('/doctor-followups',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/doctor-followups.html'));
-});
-
-app.get('/doctor-profile',(req,res)=>{
- res.sendFile(path.join(__dirname,'views/public/doctor-profile.html'));
+app.get('/messaging',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/messaging.html'));
 });
 
 app.post('/signup',async(req,res)=>{
