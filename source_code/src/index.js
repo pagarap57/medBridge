@@ -39,15 +39,15 @@ function auth(req,res,next){
 }
 
 app.get('/',(req,res)=>{
- res.sendFile(path.join(__dirname,'public/home.html'));
+ res.sendFile(path.join(__dirname,'views/public/home.html'));
 });
 
 app.get('/login',(req,res)=>{
- res.sendFile(path.join(__dirname,'public/login.html'));
+ res.sendFile(path.join(__dirname,'views/public/login.html'));
 });
 
 app.get('/signup',(req,res)=>{
- res.sendFile(path.join(__dirname,'public/signup.html'));
+ res.sendFile(path.join(__dirname,'views/public/signup.html'));
 });
 
 app.post('/signup',async(req,res)=>{
