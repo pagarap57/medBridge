@@ -242,27 +242,27 @@ font-family: "Marcellus SC", serif;
       <h1 class="brand">MedBridge</h1>
       <p class="subtitle">Create your account</p>
 
-      <form action="main.html" method="GET">
+      <form action="/signup" method="POST">
         <div class="row">
           <div class="input-group">
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" placeholder="First name" />
+            <input type="text" id="firstName" name="firstName" placeholder="First name" />
           </div>
 
           <div class="input-group">
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" placeholder="Last name" />
+            <input type="text" id="lastName" name="lastName" placeholder="Last name" />
           </div>
         </div>
 
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Enter your email" />
+          <input type="email" id="email" name="email" placeholder="Enter your email" />
         </div>
 
         <div class="input-group">
           <label for="role">Account Type</label>
-          <select id="role">
+          <select id="role" name="role">
             <option value="">Select account type</option>
             <option value="patient">Patient</option>
             <option value="doctor">Doctor</option>
@@ -271,7 +271,7 @@ font-family: "Marcellus SC", serif;
 
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Create a password" />
+          <input type="password" id="password" name="password" placeholder="Create a password" />
         </div>
 
         <div class="input-group">
@@ -283,8 +283,8 @@ font-family: "Marcellus SC", serif;
       </form>
 
       <p class="small-text">Already have an account?</p>
-      <a href="login.html" class="switch-btn">LOGIN! →</a>
-      <p class="small-text" style="margin-top: 10px;"><a href="home.html">Back to home</a></p>
+      <a href="/login" class="switch-btn">LOGIN! →</a>
+      <p class="small-text" style="margin-top: 10px;"><a href="/">Back to home</a></p>
     </div>
   </div>
 </body>

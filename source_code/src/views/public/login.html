@@ -230,23 +230,23 @@
       <h1 class="brand">MedBridge</h1>
       <p class="subtitle">Welcome back</p>
 
-      <form action="main.html" method="GET">
+      <form action="/login" method="POST">
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Enter your email" />
+          <input type="email" id="email" name="email" placeholder="Enter your email" />
         </div>
 
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter your password" />
+          <input type="password" id="password" name="password" placeholder="Enter your password" />
         </div>
 
         <button type="submit" class="login-btn">LOGIN! →</button>
       </form>
 
       <p class="small-text">New to MedBridge?</p>
-      <a href="signup.html" class="switch-btn">SIGN UP! →</a>
-      <p class="small-text" style="margin-top: 10px;"><a href="home.html">Back to home</a></p>
+      <a href="/signup" class="switch-btn">SIGN UP! →</a>
+      <p class="small-text" style="margin-top: 10px;"><a href="/">Back to home</a></p>
     </div>
   </div>
 </body>
