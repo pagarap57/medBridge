@@ -13,6 +13,7 @@ const io = new Server(server);
 
 app.use(express.static(path.join(__dirname, 'views/public')));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(
   session({
@@ -217,6 +218,55 @@ app.get('/doctor-profile', auth, doctorOnly, (req, res) => {
 
 app.get('/messaging', auth, (req, res) => {
   sendPublic(res, 'messaging.html');
+});
+
+app.get('/api/referrals', auth, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    if (isDoctor(req)) {
+      const referrals = await db.any(
+        `SELECT r.id,
+                r.specialist_name,
+                r.specialist_type,
+                r.location,
+                r.status,
+                r.notes,
+                r.created_at,
+                p.first_name AS patient_first_name,
+                p.last_name  AS patient_last_name
+         FROM referrals r
+         JOIN users p ON p.id = r.patient_id
+         WHERE r.physician_id = $1
+         ORDER BY r.created_at DESC`,
+        [userId]
+      );
+
+      return res.json({ role: 'doctor', referrals });
+    }
+
+    const referrals = await db.any(
+      `SELECT r.id,
+              r.specialist_name,
+              r.specialist_type,
+              r.location,
+              r.status,
+              r.notes,
+              r.created_at,
+              d.first_name AS doctor_first_name,
+              d.last_name  AS doctor_last_name
+       FROM referrals r
+       JOIN users d ON d.id = r.physician_id
+       WHERE r.patient_id = $1
+       ORDER BY r.created_at DESC`,
+      [userId]
+    );
+
+    return res.json({ role: 'patient', referrals });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load referrals' });
+  }
 });
 
 app.get('/patient-dashboard', auth, (req, res) => {
