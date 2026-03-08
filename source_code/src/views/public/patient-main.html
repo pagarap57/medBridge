@@ -28,6 +28,8 @@
       background: #ebe6e6;
       color: #111;
       min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     .page {
@@ -257,11 +259,17 @@
 <body>
   <main class="page">
     <header class="topbar">
+<<<<<<< HEAD:source_code/src/views/public/patient-main.html
       <a class="logo" href="/main">MedBridge</a>
       <nav class="topbar-actions">
         <a class="top-btn" href="/main">Home</a>
         <button type="button" class="top-btn" id="notifications-btn">Notifications</button>
         <div class="notification-panel" id="notification-panel">No notifications currently.</div>
+=======
+      <a href="/" class="logo">MedBridge</a>
+      <nav>
+        <a href="/login" class="card-link">Log out</a>
+>>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
       </nav>
     </header>
 
@@ -273,7 +281,11 @@
 
     <section class="grid">
       <div class="left-column">
+<<<<<<< HEAD:source_code/src/views/public/patient-main.html
         <a href="/physician-dashboard" class="card-link">
+=======
+        <a href="/main" class="card-link">
+>>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
           <article class="card">
             <div class="card-text">
               <h2>Manage Appointment Schedule</h2>
@@ -283,7 +295,11 @@
           </article>
         </a>
 
+<<<<<<< HEAD:source_code/src/views/public/patient-main.html
         <a href="/messaging" class="card-link">
+=======
+        <a href="/main" class="card-link">
+>>>>>>> daf1a0e1cb772371e9f47fce11fb645f605a9c3b:source_code/src/views/public/main.html
           <article class="card">
             <div class="card-text">
               <h2>Coordinate Patient Follow-Ups</h2>
@@ -294,7 +310,7 @@
         </a>
       </div>
 
-      <a href="/profile-overview" class="card-link">
+      <a href="/main" class="card-link">
         <article class="card">
           <div class="card-text">
             <h2>View Your Profile</h2>
