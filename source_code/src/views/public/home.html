@@ -3,48 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MedBridge Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Marcellus+SC&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus+SC&display=swap" rel="stylesheet">
+  <title>MedBridge Home</title>
   <style>
+    .marcellus-sc-regular {
+      font-family: "Marcellus SC", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
 
     body {
       min-height: 100vh;
-      font-family: 'Inter', sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow: clip;
       background:
         radial-gradient(circle at 20% 20%, rgba(53, 130, 101, 0.35), transparent 30%),
         radial-gradient(circle at 80% 12%, rgba(32, 100, 80, 0.4), transparent 28%),
         radial-gradient(circle at 92% 20%, rgba(150, 81, 49, 0.22), transparent 22%),
         radial-gradient(circle at 15% 90%, rgba(138, 146, 196, 0.28), transparent 26%),
         linear-gradient(180deg, #23272d 0%, #31445d 55%, #425d8d 100%);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
     }
 
     .screen {
       position: relative;
-      width: min(96vw, 1400px);
-      height: min(96vh, 1100px);
-      /*border: 14px solid rgba(40, 39, 44, 0.85);*/
+      width: 100%;
+      min-height: 100vh;
       overflow: hidden;
       background:
         linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15)),
         linear-gradient(180deg, #26323a 0%, #314661 52%, #46628f 100%);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
     }
 
     .screen::before {
@@ -61,170 +58,148 @@
 
     .blob {
       position: absolute;
-      filter: blur(2px);
-      opacity: 0.82;
+      filter: blur(4px);
+      opacity: 0.28;
+      z-index: 0;
     }
 
     .blob1 {
-      width: 720px;
-      height: 720px;
-      top: -170px;
-      left: 180px;
-      background: rgba(5, 71, 49, 0.78);
-      border-radius: 45% 55% 40% 60% / 50% 32% 68% 50%;
-      transform: rotate(-18deg);
+      width: 500px;
+      height: 380px;
+      top: -120px;
+      left: 6%;
+      background: rgba(190, 218, 255, 0.22);
+      border-radius: 56% 44% 38% 62% / 48% 35% 65% 52%;
+      transform: rotate(-14deg);
     }
 
     .blob2 {
-      width: 620px;
-      height: 620px;
-      top: 110px;
-      left: 180px;
-      background: rgba(35, 66, 96, 0.62);
-      border-radius: 56% 44% 63% 37% / 42% 55% 45% 58%;
-      transform: rotate(12deg);
+      width: 440px;
+      height: 500px;
+      top: 10%;
+      right: -40px;
+      background: rgba(11, 87, 65, 0.40);
+      border-radius: 44% 56% 62% 38% / 40% 63% 37% 60%;
+      transform: rotate(8deg);
     }
 
     .blob3 {
-      width: 720px;
+      width: 700px;
       height: 520px;
-      right: -130px;
-      top: 420px;
-      background: rgba(50, 72, 118, 0.75);
-      border-radius: 58% 42% 34% 66% / 44% 53% 47% 56%;
-      transform: rotate(-18deg);
+      bottom: -240px;
+      left: -120px;
+      transform: rotate(9deg);
+      background: rgba(102, 138, 201, 0.18);
+      border-radius: 46% 54% 58% 42% / 50% 42% 58% 50%;
     }
 
     .blob4 {
-      width: 420px;
-      height: 420px;
-      left: -140px;
-      top: 130px;
-      background: rgba(170, 168, 195, 0.18);
-      border-radius: 56% 44% 60% 40% / 44% 57% 43% 56%;
-      transform: rotate(-12deg);
+      width: 360px;
+      height: 300px;
+      bottom: -70px;
+      right: 8%;
+      background: rgba(210, 228, 255, 0.15);
+      border-radius: 60% 40% 52% 48% / 45% 57% 43% 55%;
+      transform: rotate(-20deg);
     }
 
     .blob5 {
-      width: 400px;
-      height: 400px;
-      left: -120px;
-      bottom: -120px;
-      background: rgba(192, 195, 224, 0.22);
-      border-radius: 58% 42% 50% 50% / 41% 58% 42% 59%;
-      transform: rotate(10deg);
+      width: 290px;
+      height: 240px;
+      top: 52%;
+      left: 18%;
+      background: rgba(170, 148, 243, 0.12);
+      border-radius: 54% 46% 34% 66% / 58% 30% 70% 42%;
+      transform: rotate(22deg);
     }
 
     .blob6 {
-      width: 360px;
-      height: 260px;
-      right: -60px;
-      top: 210px;
-      background: rgba(115, 95, 122, 0.18);
-      border-radius: 60% 40% 60% 40% / 48% 62% 38% 52%;
-      transform: rotate(18deg);
-    }
-
-    .blob7 {
       width: 260px;
-      height: 360px;
-      right: -70px;
-      bottom: 110px;
-      background: rgba(134, 143, 223, 0.18);
-      border-radius: 42% 58% 39% 61% / 50% 38% 62% 50%;
-      transform: rotate(-24deg);
+      height: 200px;
+      top: 62%;
+      right: 4%;
+      background: rgba(140, 166, 227, 0.14);
+      border-radius: 42% 58% 66% 34% / 38% 49% 51% 62%;
+      transform: rotate(-26deg);
     }
 
     .content {
-      position: absolute;
-      inset: 0;
+      position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 40px 20px;
+      min-height: 100vh;
+      padding: 56px 20px;
     }
 
-    .panel {
+    .card {
       width: 100%;
-      max-width: 760px;
+      max-width: 470px;
+      text-align: center;
+      padding: 30px 28px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 16px;
     }
-.marcellus-sc-regular {
-  font-family: "Marcellus SC", serif;
-  font-weight: 400;
-  font-style: normal;
-}
+
     .brand {
       font-family: "Marcellus SC", serif;
-      font-size: clamp(4rem, 8vw, 7rem);
+      font-size: 4.3rem;
+      letter-spacing: 2px;
       line-height: 0.95;
-      letter-spacing: 0.04em;
-      color: #f3f2f0;
-      text-shadow: 0 2px 2px rgba(0,0,0,0.25);
-      margin-bottom: 34px;
-      font-weight: 500;
+      margin-bottom: 4px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.76);
+      margin-bottom: 8px;
     }
 
     .primary-btn,
     .secondary-btn {
+      width: 100%;
       border: none;
       cursor: pointer;
-      color: #0c1f4b;
-      font-family: 'Cormorant Garamond', serif;
+      border-radius: 26px;
+      padding: 18px 22px;
+      font-size: 1.25rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
-      background: linear-gradient(90deg, rgba(241,239,249,0.92), rgba(255,246,228,0.88));
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.25),
-        0 10px 24px rgba(0,0,0,0.12);
+      letter-spacing: 1px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #0d1d43;
+      background: linear-gradient(90deg, rgba(243, 240, 249, 0.96), rgba(239, 237, 225, 0.92));
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
     }
 
     .primary-btn:hover,
     .secondary-btn:hover {
       transform: translateY(-2px);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.25),
-        0 16px 28px rgba(0,0,0,0.16);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
     }
 
-    .primary-btn {
-      width: min(70vw, 500px);
-      min-height: 110px;
-      border-radius: 34px;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      margin-bottom: 82px;
-    }
-
-    .secondary-text {
-      color: rgba(255,255,255,0.92);
-      font-family: "Marcellus SC", serif;
-      font-size: clamp(1.5rem, 3vw, 2.4rem);
-      font-weight: 400;
-      margin-bottom: 22px;
-    }
-
-    .secondary-btn {
-      width: min(44vw, 320px);
-      min-height: 74px;
-      border-radius: 28px;
-      font-size: clamp(1.5rem, 2.7vw, 2.3rem);
+    .small-text {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.88);
     }
 
     .arrow {
-      margin-left: 14px;
+      margin-left: 8px;
       font-weight: 600;
     }
 
     @media (max-width: 900px) {
-      .screen {
-        border-width: 10px;
-      }
-
       .blob1 {
         width: 480px;
         height: 480px;
@@ -258,35 +233,22 @@
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      .screen {
-        width: 100vw;
-        height: 100vh;
-        border-width: 0;
-      }
-
       .brand {
-        margin-bottom: 24px;
+        font-size: 3.1rem;
       }
 
-      .primary-btn {
-        width: 88%;
-        min-height: 84px;
-        font-size: 2rem;
-        margin-bottom: 50px;
+      .card {
+        padding: 24px 18px;
       }
 
-      .secondary-text {
-        font-size: 1.8rem;
-
-      }
-
+      .primary-btn,
       .secondary-btn {
-        width: 72%;
-        font-size: 1.7rem;
+        font-size: 1.05rem;
+      }
+
+      .content {
+        min-height: auto;
+        padding: 44px 14px 52px;
       }
     }
   </style>
@@ -302,20 +264,20 @@
     <div class="blob blob7"></div>
 
     <div class="content">
-      <div class="panel">
-        <h1 class="brand">MedBridge</h1>
+  <div class="panel">
+    <h1 class="brand">MedBridge</h1>
 
-        <button class="primary-btn" onclick="window.location.href='/login'">
-          LOGIN! <span class="arrow">→</span>
-        </button>
+    <button class="primary-btn" onclick="window.location.href='/login'">
+      LOGIN! <span class="arrow">→</span>
+    </button>
 
-        <p class="secondary-text">New to MedBridge?</p>
+    <p class="secondary-text">New to MedBridge?</p>
 
-        <button class="secondary-btn" onclick="window.location.href='/signup'">
-          SIGN UP! <span class="arrow">→</span>
-        </button>
-      </div>
-    </div>
+    <button class="secondary-btn" onclick="window.location.href='/signup'">
+      SIGN UP! <span class="arrow">→</span>
+    </button>
   </div>
+</div>
+    </div>
 </body>
 </html>
