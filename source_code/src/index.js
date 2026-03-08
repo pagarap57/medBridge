@@ -66,6 +66,10 @@ app.get('/profile-overview',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/profile-overview.html'));
 });
 
+app.get('/messaging',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/messaging.html'));
+});
+
 app.post('/signup',async(req,res)=>{
 
  try{
