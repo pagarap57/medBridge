@@ -28,6 +28,8 @@
       background: #ebe6e6;
       color: #111;
       min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     .page {
@@ -244,7 +246,9 @@
 <body>
   <main class="page">
     <header class="topbar">
-      <div class="logo">MedBridge</div>
+      <a href="home.html" class="logo">MedBridge</a>
+      <nav>
+        <a href="login.html" class="card-link">Log out</a>
       </nav>
     </header>
 
@@ -256,7 +260,7 @@
 
     <section class="grid">
       <div class="left-column">
-        <a href="/messaging" class="card-link">
+        <a href="main.html" class="card-link">
           <article class="card">
             <div class="card-text">
               <h2>Talk to your primary care provider</h2>
@@ -266,7 +270,7 @@
           </article>
         </a>
 
-        <a href="/patient-dashboard" class="card-link">
+        <a href="main.html" class="card-link">
           <article class="card">
             <div class="card-text">
               <h2>Find a referral</h2>
@@ -277,7 +281,7 @@
         </a>
       </div>
 
-      <a href="/charts" class="card-link">
+      <a href="main.html" class="card-link">
         <article class="card">
           <div class="card-text">
             <h2>View Your Profile</h2>
