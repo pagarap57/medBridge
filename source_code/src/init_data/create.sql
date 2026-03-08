@@ -93,6 +93,18 @@ CREATE TABLE appointments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE referrals (
+  id SERIAL PRIMARY KEY,
+  patient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  physician_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  specialist_name VARCHAR(150) NOT NULL,
+  specialist_type VARCHAR(100),
+  location VARCHAR(150),
+  status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE prescriptions (
   id SERIAL PRIMARY KEY,
   patient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
