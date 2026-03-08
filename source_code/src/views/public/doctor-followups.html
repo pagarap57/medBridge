@@ -66,11 +66,11 @@
       <div class="grid">
         <article class="card">
           <div><div class="name">Cardiology - Dr. Priya Nair</div><div class="meta">Interventional cardiology | Availability: 3 days | St. Anthony Heart Center</div></div>
-          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist="Cardiology - Dr. Priya Nair" type="button">Send Referral</button></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist-name="Dr. Priya Nair" data-specialist-type="Cardiology" data-location="St. Anthony Heart Center, Denver" data-notes="Interventional cardiology consult recommended based on current symptoms and care plan." type="button">Send Referral</button></div>
         </article>
         <article class="card">
           <div><div class="name">Endocrinology - Dr. Marcus Lee</div><div class="meta">Diabetes and thyroid care | Availability: 5 days | Westside Specialty Clinic</div></div>
-          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist="Endocrinology - Dr. Marcus Lee" type="button">Send Referral</button></div>
+          <div class="actions"><a href="/doctor-profile" class="btn btn-secondary">View Profile</a><button class="btn btn-primary send-referral-btn" data-specialist-name="Dr. Marcus Lee" data-specialist-type="Endocrinology" data-location="Westside Specialty Clinic, Lakewood" data-notes="Endocrinology follow-up requested for thyroid and diabetes management support." type="button">Send Referral</button></div>
         </article>
       </div>
       <div class="confirm-banner" id="confirm-banner"></div>
@@ -98,11 +98,7 @@
       <h3 id="modal-title">Send referral</h3>
       <p id="modal-subtitle">Choose a client to receive this referral.</p>
       <select id="client-select">
-        <option value="">Select a client</option>
-        <option value="Mia Johnson">Mia Johnson</option>
-        <option value="Noah Patel">Noah Patel</option>
-        <option value="Elena Ruiz">Elena Ruiz</option>
-        <option value="Aiden Brooks">Aiden Brooks</option>
+        <option value="">Loading clients...</option>
       </select>
       <div class="modal-actions">
         <button class="modal-btn modal-cancel" id="cancel-send" type="button">Cancel</button>
@@ -119,12 +115,51 @@
     const sendButtons = document.querySelectorAll(".send-referral-btn");
     const cancelBtn = document.getElementById("cancel-send");
     const confirmBtn = document.getElementById("confirm-send");
-    let selectedSpecialist = "";
+    let selectedReferral = null;
+
+    function setClientOptions(patients) {
+      clientSelect.innerHTML = '<option value="">Select a client</option>';
+
+      patients.forEach((patient) => {
+        const option = document.createElement("option");
+        option.value = String(patient.id);
+        option.textContent = `${patient.first_name} ${patient.last_name} (${patient.email})`;
+        clientSelect.appendChild(option);
+      });
+
+      if (patients.length === 0) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "No patient accounts found";
+        clientSelect.appendChild(option);
+      }
+    }
+
+    async function loadPatients() {
+      try {
+        const response = await fetch("/api/patients");
+        if (!response.ok) {
+          throw new Error("Failed to load patients");
+        }
+        const data = await response.json();
+        setClientOptions(data.patients || []);
+      } catch (error) {
+        clientSelect.innerHTML = '<option value="">Unable to load clients</option>';
+      }
+    }
+
+    loadPatients();
 
     sendButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
-        selectedSpecialist = btn.dataset.specialist || "selected specialist";
-        modalSubtitle.textContent = `Choose a client for ${selectedSpecialist}.`;
+        selectedReferral = {
+          specialistName: btn.dataset.specialistName,
+          specialistType: btn.dataset.specialistType,
+          location: btn.dataset.location,
+          notes: btn.dataset.notes
+        };
+
+        modalSubtitle.textContent = `Choose a client for ${selectedReferral.specialistType} - ${selectedReferral.specialistName}.`;
         clientSelect.value = "";
         modal.classList.add("show");
       });
@@ -140,15 +175,50 @@
       }
     });
 
-    confirmBtn.addEventListener("click", () => {
+    confirmBtn.addEventListener("click", async () => {
+      if (!selectedReferral) {
+        alert("Please choose a specialist first.");
+        return;
+      }
+
       const selectedClient = clientSelect.value;
       if (!selectedClient) {
         alert("Please choose a client first.");
         return;
       }
-      modal.classList.remove("show");
-      confirmBanner.textContent = `Referral sent to ${selectedClient} for ${selectedSpecialist}.`;
-      confirmBanner.style.display = "block";
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Sending...";
+
+      try {
+        const response = await fetch("/api/referrals", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            patientId: Number(selectedClient),
+            specialistName: selectedReferral.specialistName,
+            specialistType: selectedReferral.specialistType,
+            location: selectedReferral.location,
+            notes: selectedReferral.notes
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to send referral");
+        }
+
+        modal.classList.remove("show");
+        confirmBanner.textContent = `Referral sent to ${data.referral.patient_first_name} ${data.referral.patient_last_name} for ${selectedReferral.specialistType}.`;
+        confirmBanner.style.display = "block";
+      } catch (error) {
+        alert(error.message || "Failed to send referral.");
+      } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirm Send";
+      }
     });
   </script>
 </body>

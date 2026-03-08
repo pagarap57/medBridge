@@ -53,8 +53,6 @@ function isDoctor(req) {
   return req.session.user?.role === 'doctor';
 }
 
-<<<<<<< HEAD
-=======
 function doctorOnly(req, res, next) {
   if (!isDoctor(req)) {
     return res.redirect('/patient-main');
@@ -62,7 +60,6 @@ function doctorOnly(req, res, next) {
   next();
 }
 
->>>>>>> main
 app.get('/', (req, res) => {
   if (req.session.user) {
     return res.redirect('/dashboard');
@@ -113,13 +110,7 @@ app.post('/signup', async (req, res) => {
     );
 
     req.session.user = user;
-<<<<<<< HEAD
-    req.session.save(() => {
-      res.redirect('/dashboard');
-    });
-=======
     req.session.save(() => res.redirect('/dashboard'));
->>>>>>> main
   } catch (err) {
     console.error(err);
     res.redirect('/signup?error=Signup+failed.+Please+try+again');
@@ -156,13 +147,7 @@ app.post('/login', async (req, res) => {
       role: user.role
     };
 
-<<<<<<< HEAD
-    req.session.save(() => {
-      res.redirect('/dashboard');
-    });
-=======
     req.session.save(() => res.redirect('/dashboard'));
->>>>>>> main
   } catch (err) {
     console.error(err);
     res.redirect('/login?error=Something+went+wrong.+Please+try+again');
@@ -171,55 +156,6 @@ app.post('/login', async (req, res) => {
 
 app.get('/dashboard', auth, (req, res) => {
   if (isDoctor(req)) {
-<<<<<<< HEAD
-    return res.redirect('/maindoc');
-  }
-  res.redirect('/main');
-});
-
-app.get('/main', auth, (req, res) => {
-  if (isDoctor(req)) {
-    return res.redirect('/maindoc');
-  }
-  sendPublic(res, 'main.html');
-});
-
-app.get('/maindoc', auth, (req, res) => {
-  if (!isDoctor(req)) {
-    return res.redirect('/main');
-  }
-  sendPublic(res, 'maindoc.html');
-});
-
-app.get('/talk-provider', auth, (req, res) => {
-  sendPublic(res, 'talk-provider.html');
-});
-
-app.get('/find-referral', auth, (req, res) => {
-  sendPublic(res, 'find-referral.html');
-});
-
-app.get('/profile-overview', auth, (req, res) => {
-  sendPublic(res, 'profile-overview.html');
-});
-
-app.get('/messaging', auth, (req, res) => {
-  sendPublic(res, 'messaging.html');
-});
-
-app.get('/patient-dashboard', auth, (req, res) => {
-  res.redirect('/find-referral');
-});
-
-app.get('/physician-dashboard', auth, (req, res) => {
-  res.redirect('/maindoc');
-});
-
-app.get('/charts', auth, (req, res) => {
-  res.redirect('/profile-overview');
-});
-
-=======
     return res.redirect('/doctor-main');
   }
   res.redirect('/patient-main');
@@ -333,6 +269,62 @@ app.get('/api/referrals', auth, async (req, res) => {
   }
 });
 
+app.get('/api/patients', auth, doctorOnly, async (req, res) => {
+  try {
+    const patients = await db.any(
+      `SELECT id, first_name, last_name, email
+       FROM users
+       WHERE role = 'patient'
+       ORDER BY first_name, last_name, id`
+    );
+
+    return res.json({ patients });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to load patients' });
+  }
+});
+
+app.post('/api/referrals', auth, doctorOnly, async (req, res) => {
+  try {
+    const physicianId = req.session.user.id;
+    const { patientId, specialistName, specialistType, location, notes } = req.body;
+
+    if (!patientId || !specialistName) {
+      return res.status(400).json({ error: 'patientId and specialistName are required' });
+    }
+
+    const patient = await db.oneOrNone(
+      `SELECT id, first_name, last_name
+       FROM users
+       WHERE id = $1 AND role = 'patient'`,
+      [patientId]
+    );
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient account not found' });
+    }
+
+    const referral = await db.one(
+      `INSERT INTO referrals(patient_id, physician_id, specialist_name, specialist_type, location, notes)
+       VALUES($1, $2, $3, $4, $5, $6)
+       RETURNING id, patient_id, physician_id, specialist_name, specialist_type, location, status, notes, created_at`,
+      [patient.id, physicianId, specialistName, specialistType || null, location || null, notes || null]
+    );
+
+    return res.status(201).json({
+      referral: {
+        ...referral,
+        patient_first_name: patient.first_name,
+        patient_last_name: patient.last_name
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to create referral' });
+  }
+});
+
 app.get('/patient-dashboard', auth, (req, res) => {
   res.redirect('/patient-find-referral');
 });
@@ -345,7 +337,6 @@ app.get('/charts', auth, (req, res) => {
   res.redirect('/patient-profile-overview');
 });
 
->>>>>>> main
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.clearCookie('medbridge.sid');
