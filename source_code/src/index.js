@@ -50,6 +50,22 @@ app.get('/signup',(req,res)=>{
  res.sendFile(path.join(__dirname,'views/public/signup.html'));
 });
 
+app.get('/main',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/main.html'));
+});
+
+app.get('/talk-provider',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/talk-provider.html'));
+});
+
+app.get('/find-referral',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/find-referral.html'));
+});
+
+app.get('/profile-overview',(req,res)=>{
+ res.sendFile(path.join(__dirname,'views/public/profile-overview.html'));
+});
+
 app.post('/signup',async(req,res)=>{
 
  try{
